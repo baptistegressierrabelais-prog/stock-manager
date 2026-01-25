@@ -379,14 +379,14 @@
 
         clearForm();
         render();
-        sendToFiveM();
+        saveStockPersistent();
     }
 
     function removeItem(index) {
         if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
             stock.splice(index, 1);
             render();
-            sendToFiveM();
+            saveStockPersistent();
         }
     }
 
@@ -396,7 +396,7 @@
             removeItem(index);
         } else {
             render();
-            sendToFiveM();
+            saveStockPersistent();
         }
     }
 
@@ -472,6 +472,15 @@
 
     function saveStock() {
         window.storage.set('bcssi-sheriff-stock', JSON.stringify(stock), true).catch(err => console.log('Erreur sauvegarde'));
+    }
+
+    async function saveStockPersistent() {
+        try {
+            await window.storage.set('bcssi-sheriff-stock', JSON.stringify(stock), true);
+            console.log('✅ Stock sauvegardé avec succès');
+        } catch (err) {
+            console.log('Erreur sauvegarde:', err);
+        }
     }
 
     async function syncStock() {
