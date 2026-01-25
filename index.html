@@ -466,15 +466,31 @@
     function sendToFiveM() {
         // Sauvegarde locale persistante
         saveStock();
+        // Synchronisation avec d'autres utilisateurs
+        syncStock();
     }
 
     function saveStock() {
-        window.storage.set('bcssi-sheriff-stock', JSON.stringify(stock)).catch(err => console.log('Erreur sauvegarde'));
+        window.storage.set('bcssi-sheriff-stock', JSON.stringify(stock), true).catch(err => console.log('Erreur sauvegarde'));
+    }
+
+    async function syncStock() {
+        try {
+            const result = await window.storage.get('bcssi-sheriff-stock', true);
+            if (result && result.value) {
+                const sharedStock = JSON.parse(result.value);
+                // Fusionner les données
+                stock = sharedStock;
+                render();
+            }
+        } catch (e) {
+            console.log('Sync en cours...');
+        }
     }
 
     async function loadStock() {
         try {
-            const result = await window.storage.get('bcssi-sheriff-stock');
+            const result = await window.storage.get('bcssi-sheriff-stock', true);
             if (result && result.value) {
                 stock = JSON.parse(result.value);
                 render();
@@ -499,6 +515,11 @@
 
     // Initialisation - Charger les données sauvegardées
     loadStock();
+
+    // Synchronisation en temps réel toutes les 2 secondes
+    setInterval(() => {
+        syncStock();
+    }, 2000);
 </script>
 
 </body>
