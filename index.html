@@ -353,7 +353,7 @@
     </div>
 
     <div class="footer">
-        Synchronisation en direct avec le serveur FiveM
+        Synchronisation en direct entre utilisateurs du site
     </div>
 </div>
 
@@ -464,12 +464,23 @@
     }
 
     function sendToFiveM() {
-        if (typeof GetParentResourceName === 'function') {
-            fetch(`https://${GetParentResourceName()}/updateStock`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(stock)
-            }).catch(err => console.log('Sync FiveM...'));
+        // Sauvegarde locale persistante
+        saveStock();
+    }
+
+    function saveStock() {
+        window.storage.set('bcssi-sheriff-stock', JSON.stringify(stock)).catch(err => console.log('Erreur sauvegarde'));
+    }
+
+    async function loadStock() {
+        try {
+            const result = await window.storage.get('bcssi-sheriff-stock');
+            if (result && result.value) {
+                stock = JSON.parse(result.value);
+                render();
+            }
+        } catch (e) {
+            console.log('Pas de données sauvegardées');
         }
     }
 
@@ -486,8 +497,8 @@
         }
     });
 
-    // Initialisation
-    render();
+    // Initialisation - Charger les données sauvegardées
+    loadStock();
 </script>
 
 </body>
