@@ -395,6 +395,7 @@
           <label for="category">Catégorie</label>
           <select id="category">
             <option value="Armes">🔫 Armes</option>
+            <option value="Équipement Arme">🎯 Équipement Arme</option>
             <option value="Munitions">💣 Munitions</option>
             <option value="Équipement">🧥 Équipement</option>
             <option value="Divers">📦 Divers</option>
@@ -461,6 +462,7 @@
 
   const categories = {
     "Armes": { icon: "🔫", color: "#ef4444" },
+    "Équipement Arme": { icon: "🎯", color: "#f59e0b" },
     "Munitions": { icon: "💣", color: "#f97316" },
     "Équipement": { icon: "🧥", color: "#06b6d4" },
     "Divers": { icon: "📦", color: "#8b5cf6" }
@@ -562,6 +564,7 @@
       // Vérifier les seuils de stock faible
       const thresholds = {
         "Armes": 5,
+        "Équipement Arme": 20,
         "Munitions": 5000,
         "Équipement": 5,
         "Divers": 50
