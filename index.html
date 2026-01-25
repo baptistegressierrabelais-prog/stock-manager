@@ -627,7 +627,7 @@
           tr.innerHTML = `
             <td>${item.name}</td>
             <td style="text-align: right;"><input type="number" id="qty-${item.id}" value="${item.qty}" min="0" class="qty-input"></td>
-            <td style="text-align: right;"><span class="qty-badge">${item.qty.toLocaleString('fr-FR')}</span></td>
+            <td style="text-align: right;"><span class="qty-badge">${Number(item.qty).toLocaleString('fr-FR')}</span></td>
             <td class="action-cell">
               <button class="btn-update" onclick="updateItem('${item.id}', document.getElementById('qty-${item.id}').value)">✓</button>
               <button class="btn-danger" onclick="removeItem('${item.id}')">✕</button>
