@@ -311,8 +311,8 @@
                 </select>
                 <input type="number" id="itemQty" placeholder="Quantité" min="1" value="1">
             </div>
-            <button class="btn-add" onclick="addItem()">+ Ajouter</button>
-            <button class="btn-clear" onclick="clearForm()">Réinitialiser</button>
+            <button class="btn-add" onclick="ajouterArticle()">+ Ajouter</button>
+            <button class="btn-clear" onclick="reinitialiserForm()">Réinitialiser</button>
         </div>
 
         <div class="stats">
@@ -359,184 +359,175 @@
 
 <script>
     let stock = [];
+    let syncEnCours = false;
 
-    function addItem() {
-        const name = document.getElementById('itemName').value.trim();
+    // ===== CHARGER LES DONNEES AU DEMARRAGE =====
+    async function chargerStock() {
+        try {
+            const resultat = await window.storage.get('bcssi-stock-data', true);
+            if (resultat && resultat.value) {
+                stock = JSON.parse(resultat.value);
+            }
+        } catch (erreur) {
+            console.log('Pas de données, démarrage avec stock vide');
+            stock = [];
+        }
+        afficherTableau();
+        mettreAJourStats();
+    }
+
+    // ===== SAUVEGARDER LES DONNEES =====
+    async function sauvegarderStock() {
+        try {
+            await window.storage.set('bcssi-stock-data', JSON.stringify(stock), true);
+        } catch (erreur) {
+            console.error('Erreur sauvegarde:', erreur);
+        }
+    }
+
+    // ===== SYNCHRONISER AVEC LES AUTRES UTILISATEURS =====
+    async function synchroniserStock() {
+        if (syncEnCours) return;
+        syncEnCours = true;
+
+        try {
+            const resultat = await window.storage.get('bcssi-stock-data', true);
+            if (resultat && resultat.value) {
+                const stockDistant = JSON.parse(resultat.value);
+                const stockLocal = JSON.stringify(stock);
+                const stockDistantStr = JSON.stringify(stockDistant);
+
+                if (stockLocal !== stockDistantStr) {
+                    stock = stockDistant;
+                    afficherTableau();
+                    mettreAJourStats();
+                }
+            }
+        } catch (erreur) {
+            console.log('Erreur sync');
+        }
+
+        syncEnCours = false;
+    }
+
+    // ===== AJOUTER UN ARTICLE =====
+    function ajouterArticle() {
+        const nom = document.getElementById('itemName').value.trim();
         const type = document.getElementById('itemType').value;
-        const qty = parseInt(document.getElementById('itemQty').value);
+        const quantite = parseInt(document.getElementById('itemQty').value);
 
-        if (!name || !qty || qty <= 0) {
+        if (!nom || !quantite || quantite <= 0) {
             alert('Veuillez remplir tous les champs correctement');
             return;
         }
 
-        const existing = stock.find(i => i.name === name && i.type === type);
-        if (existing) {
-            existing.qty += qty;
+        const existant = stock.find(a => a.nom === nom && a.type === type);
+        if (existant) {
+            existant.quantite += quantite;
         } else {
-            stock.push({ name, type, qty });
+            stock.push({ nom, type, quantite });
         }
 
-        clearForm();
-        render();
-        saveStockPersistent();
+        reinitialiserForm();
+        afficherTableau();
+        mettreAJourStats();
+        sauvegarderStock();
     }
 
-    function removeItem(index) {
+    // ===== SUPPRIMER UN ARTICLE =====
+    function supprimerArticle(index) {
         if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
             stock.splice(index, 1);
-            render();
-            saveStockPersistent();
+            afficherTableau();
+            mettreAJourStats();
+            sauvegarderStock();
         }
     }
 
-    function changeQty(index, delta) {
-        stock[index].qty += delta;
-        if (stock[index].qty <= 0) {
-            removeItem(index);
+    // ===== MODIFIER LA QUANTITE =====
+    function modifierQuantite(index, delta) {
+        stock[index].quantite += delta;
+
+        if (stock[index].quantite <= 0) {
+            supprimerArticle(index);
         } else {
-            render();
-            saveStockPersistent();
+            afficherTableau();
+            mettreAJourStats();
+            sauvegarderStock();
         }
     }
 
-    function clearForm() {
+    // ===== REINITIALISER LE FORMULAIRE =====
+    function reinitialiserForm() {
         document.getElementById('itemName').value = '';
         document.getElementById('itemType').value = 'arme';
         document.getElementById('itemQty').value = '1';
         document.getElementById('itemName').focus();
     }
 
-    function getTypeBadge(type) {
-        const types = {
-            'arme': { class: 'type-arme', label: '🔫 Arme' },
-            'munition': { class: 'type-munition', label: '💥 Munition' },
-            'equipement': { class: 'type-equipement', label: '🛡️ Équipement' }
+    // ===== OBTENIR LE BADGE DE TYPE =====
+    function obtenirBadgeType(type) {
+        const badges = {
+            'arme': { classe: 'type-arme', label: '🔫 Arme' },
+            'munition': { classe: 'type-munition', label: '💥 Munition' },
+            'equipement': { classe: 'type-equipement', label: '🛡️ Équipement' }
         };
-        return types[type] || types['equipement'];
+        return badges[type] || badges['equipement'];
     }
 
-    function updateStats() {
-        const totalItems = stock.reduce((sum, item) => sum + item.qty, 0);
-        const weaponCount = stock.filter(i => i.type === 'arme').reduce((sum, item) => sum + item.qty, 0);
-        const ammoCount = stock.filter(i => i.type === 'munition').reduce((sum, item) => sum + item.qty, 0);
-        const equipCount = stock.filter(i => i.type === 'equipement').reduce((sum, item) => sum + item.qty, 0);
-
-        document.getElementById('totalItems').textContent = totalItems;
-        document.getElementById('weaponCount').textContent = weaponCount;
-        document.getElementById('ammoCount').textContent = ammoCount;
-        document.getElementById('equipCount').textContent = equipCount;
-    }
-
-    function render() {
-        const table = document.getElementById('stockTable');
-        const emptyMessage = document.getElementById('emptyMessage');
+    // ===== AFFICHER LE TABLEAU =====
+    function afficherTableau() {
+        const tableau = document.getElementById('stockTable');
+        const messageVide = document.getElementById('emptyMessage');
 
         if (stock.length === 0) {
-            table.innerHTML = '';
-            emptyMessage.style.display = 'block';
-            updateStats();
+            tableau.innerHTML = '';
+            messageVide.style.display = 'block';
             return;
         }
 
-        emptyMessage.style.display = 'none';
-        table.innerHTML = '';
+        messageVide.style.display = 'none';
+        tableau.innerHTML = '';
 
-        stock.forEach((item, i) => {
-            const typeBadge = getTypeBadge(item.type);
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><strong>${item.name}</strong></td>
-                <td><span class="type-badge ${typeBadge.class}">${typeBadge.label}</span></td>
-                <td><span class="quantity">${item.qty}</span></td>
+        stock.forEach((article, index) => {
+            const badge = obtenirBadgeType(article.type);
+            const ligne = document.createElement('tr');
+            ligne.innerHTML = `
+                <td><strong>${article.nom}</strong></td>
+                <td><span class="type-badge ${badge.classe}">${badge.label}</span></td>
+                <td><span class="quantity">${article.quantite}</span></td>
                 <td>
                     <div class="actions">
-                        <button class="btn-qty" onclick="changeQty(${i}, 1)">+</button>
-                        <button class="btn-qty" onclick="changeQty(${i}, -1)">-</button>
-                        <button class="btn-delete" onclick="removeItem(${i})">Supprimer</button>
+                        <button class="btn-qty" onclick="modifierQuantite(${index}, 1)">+</button>
+                        <button class="btn-qty" onclick="modifierQuantite(${index}, -1)">-</button>
+                        <button class="btn-delete" onclick="supprimerArticle(${index})">Supprimer</button>
                     </div>
                 </td>
             `;
-            table.appendChild(row);
+            tableau.appendChild(ligne);
         });
-
-        updateStats();
     }
 
-    function sendToFiveM() {
-        // Sauvegarde locale persistante
-        saveStock();
-        // Synchronisation avec d'autres utilisateurs
-        syncStock();
+    // ===== METTRE A JOUR LES STATISTIQUES =====
+    function mettreAJourStats() {
+        const totalQuantite = stock.reduce((somme, article) => somme + article.quantite, 0);
+        const armes = stock.filter(a => a.type === 'arme').reduce((somme, article) => somme + article.quantite, 0);
+        const munitions = stock.filter(a => a.type === 'munition').reduce((somme, article) => somme + article.quantite, 0);
+        const equipements = stock.filter(a => a.type === 'equipement').reduce((somme, article) => somme + article.quantite, 0);
+
+        document.getElementById('totalItems').textContent = totalQuantite;
+        document.getElementById('weaponCount').textContent = armes;
+        document.getElementById('ammoCount').textContent = munitions;
+        document.getElementById('equipCount').textContent = equipements;
     }
 
-    function saveStock() {
-        window.storage.set('bcssi-sheriff-stock', JSON.stringify(stock), true).catch(err => console.log('Erreur sauvegarde'));
-    }
+    // ===== DEMARRAGE =====
+    chargerStock();
 
-    async function saveStockPersistent() {
-        try {
-            await window.storage.set('bcssi-sheriff-stock', JSON.stringify(stock), true);
-            console.log('✅ Stock sauvegardé');
-        } catch (err) {
-            console.log('Erreur sauvegarde:', err);
-        }
-    }
-
-    async function syncStock() {
-        try {
-            const result = await window.storage.get('bcssi-sheriff-stock', true);
-            if (result && result.value) {
-                const sharedStock = JSON.parse(result.value);
-                // Vérifier si les données ont changé
-                if (JSON.stringify(stock) !== JSON.stringify(sharedStock)) {
-                    stock = sharedStock;
-                    render();
-                }
-            }
-        } catch (e) {
-            console.log('Sync en cours...');
-        }
-    }
-
-    async function loadStock() {
-        try {
-            const result = await window.storage.get('bcssi-sheriff-stock', true);
-            if (result && result.value) {
-                stock = JSON.parse(result.value);
-            }
-            render();
-        } catch (e) {
-            console.log('Pas de données sauvegardées, démarrage avec stock vide');
-            render();
-        }
-    }
-
-    window.addEventListener('message', function(event) {
-        const data = event.data;
-        if (data.action === 'open') {
-            document.body.style.display = 'block';
-            stock = data.stock || [];
-            render();
-            clearForm();
-        }
-        if (data.action === 'close') {
-            document.body.style.display = 'none';
-        }
-    });
-
-    // Initialisation - Charger les données sauvegardées
-    loadStock();
-
-    // Synchronisation en temps réel toutes les 3 secondes SEULEMENT si pas de modification
-    let lastSyncTime = 0;
+    // ===== SYNCHRONISATION AUTOMATIQUE TOUTES LES 3 SECONDES =====
     setInterval(() => {
-        const now = Date.now();
-        if (now - lastSyncTime > 3000) {
-            syncStock();
-            lastSyncTime = now;
-        }
-    }, 1000);
+        synchroniserStock();
+    }, 3000);
 </script>
 
 </body>
