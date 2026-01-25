@@ -5,290 +5,52 @@
     <title>BCSSI – Gestionnaire de Stock Sheriff</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', Helvetica, sans-serif;
-            background: rgba(10, 10, 15, 0.95);
-            color: #ffffff;
-        }
-
-        .container {
-            width: 1000px;
-            margin: 40px auto;
-            background: #141824;
-            border-radius: 12px;
-            box-shadow: 0 0 25px rgba(0,0,0,0.6);
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #0f4c3a 0%, #1a7c5e 100%);
-            padding: 25px;
-            text-align: center;
-            border-bottom: 2px solid #0f4c3a;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            font-size: 12px;
-            opacity: 0.8;
-            letter-spacing: 1px;
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        .top-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            flex: 1;
-            min-width: 300px;
-        }
-
-        input, select, button {
-            padding: 12px 15px;
-            border-radius: 6px;
-            border: none;
-            outline: none;
-            font-size: 13px;
-            transition: all 0.3s;
-        }
-
-        input, select {
-            background: #1e2333;
-            color: #fff;
-            flex: 1;
-        }
-
-        input::placeholder {
-            color: #888;
-        }
-
-        input:focus, select:focus {
-            background: #242d40;
-            box-shadow: 0 0 8px rgba(26, 124, 94, 0.3);
-        }
-
-        .btn-add {
-            background: #1a7c5e;
-            color: #fff;
-            cursor: pointer;
-            padding: 12px 25px;
-            font-weight: 600;
-            min-width: 150px;
-        }
-
-        .btn-add:hover {
-            background: #0f4c3a;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(26, 124, 94, 0.4);
-        }
-
-        .btn-clear {
-            background: #3b3f55;
-            color: #fff;
-            cursor: pointer;
-            padding: 12px 20px;
-            font-weight: 600;
-        }
-
-        .btn-clear:hover {
-            background: #4a5070;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: #1e2333;
-            padding: 15px;
-            border-radius: 6px;
-            border-left: 3px solid #1a7c5e;
-            text-align: center;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a7c5e;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            margin-bottom: 15px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 13px 15px;
-            text-align: left;
-            border-bottom: 1px solid #2a2f45;
-        }
-
-        th {
-            background: #1b2030;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 0.5px;
-            color: #1a7c5e;
-        }
-
-        tbody tr {
-            transition: background-color 0.2s;
-        }
-
-        tbody tr:hover {
-            background: #1a1f30;
-        }
-
-        .type-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .type-arme {
-            background: #c0392b;
-            color: white;
-        }
-
-        .type-munition {
-            background: #ff9800;
-            color: white;
-        }
-
-        .type-equipement {
-            background: #1a7c5e;
-            color: white;
-        }
-
-        .quantity {
-            font-weight: 700;
-            color: #1a7c5e;
-            font-size: 15px;
-        }
-
-        .actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .btn-qty {
-            background: #1a7c5e;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-            transition: all 0.2s;
-            min-width: 35px;
-        }
-
-        .btn-qty:hover {
-            background: #0f4c3a;
-            transform: scale(1.05);
-        }
-
-        .btn-delete {
-            background: #c0392b;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-
-        .btn-delete:hover {
-            background: #992d22;
-            transform: scale(1.05);
-        }
-
-        .empty-message {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .footer {
-            background: #1b2030;
-            padding: 15px;
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-            border-top: 1px solid #2a2f45;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-            }
-
-            .input-group {
-                flex-direction: column;
-                min-width: unset;
-            }
-
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            th, td {
-                padding: 10px;
-                font-size: 12px;
-            }
-
-            .actions {
-                flex-direction: column;
-                gap: 4px;
-            }
+        /* ===== Styles identiques à ton précédent code ===== */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Arial', Helvetica, sans-serif; background:rgba(10,10,15,0.95); color:#fff; }
+        .container { width:1000px; margin:40px auto; background:#141824; border-radius:12px; box-shadow:0 0 25px rgba(0,0,0,0.6); padding:0; overflow:hidden; }
+        .header { background:linear-gradient(135deg,#0f4c3a 0%,#1a7c5e 100%); padding:25px; text-align:center; border-bottom:2px solid #0f4c3a; }
+        .header h1 { font-size:28px; letter-spacing:2px; margin-bottom:5px; }
+        .header p { font-size:12px; opacity:0.8; letter-spacing:1px; }
+        .content { padding:20px; }
+        .top-bar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; justify-content:space-between; align-items:center; }
+        .input-group { display:flex; gap:10px; flex:1; min-width:300px; }
+        input, select, button { padding:12px 15px; border-radius:6px; border:none; outline:none; font-size:13px; transition:all 0.3s; }
+        input, select { background:#1e2333; color:#fff; flex:1; }
+        input::placeholder { color:#888; }
+        input:focus, select:focus { background:#242d40; box-shadow:0 0 8px rgba(26,124,94,0.3); }
+        .btn-add { background:#1a7c5e; color:#fff; cursor:pointer; padding:12px 25px; font-weight:600; min-width:150px; }
+        .btn-add:hover { background:#0f4c3a; transform:translateY(-2px); box-shadow:0 4px 12px rgba(26,124,94,0.4); }
+        .btn-clear { background:#3b3f55; color:#fff; cursor:pointer; padding:12px 20px; font-weight:600; }
+        .btn-clear:hover { background:#4a5070; }
+        .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; margin-bottom:20px; }
+        .stat-card { background:#1e2333; padding:15px; border-radius:6px; border-left:3px solid #1a7c5e; text-align:center; }
+        .stat-label { font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+        .stat-number { font-size:24px; font-weight:700; color:#1a7c5e; }
+        .table-wrapper { overflow-x:auto; margin-bottom:15px; }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:13px 15px; text-align:left; border-bottom:1px solid #2a2f45; }
+        th { background:#1b2030; font-weight:600; text-transform:uppercase; font-size:12px; letter-spacing:0.5px; color:#1a7c5e; }
+        tbody tr { transition:background-color 0.2s; }
+        tbody tr:hover { background:#1a1f30; }
+        .type-badge { display:inline-block; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; text-transform:uppercase; }
+        .type-arme { background:#c0392b; color:white; }
+        .type-munition { background:#ff9800; color:white; }
+        .type-equipement { background:#1a7c5e; color:white; }
+        .quantity { font-weight:700; color:#1a7c5e; font-size:15px; }
+        .actions { display:flex; gap:6px; align-items:center; }
+        .btn-qty { background:#1a7c5e; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer; font-weight:600; font-size:12px; transition:all 0.2s; min-width:35px; }
+        .btn-qty:hover { background:#0f4c3a; transform:scale(1.05); }
+        .btn-delete { background:#c0392b; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:600; font-size:12px; transition:all 0.2s; }
+        .btn-delete:hover { background:#992d22; transform:scale(1.05); }
+        .empty-message { text-align:center; padding:40px; color:#666; font-size:14px; }
+        .footer { background:#1b2030; padding:15px; text-align:center; font-size:12px; color:#666; border-top:1px solid #2a2f45; }
+        @media (max-width:768px) {
+            .container { width:95%; }
+            .input-group { flex-direction:column; min-width:unset; }
+            .stats { grid-template-columns:repeat(2,1fr); }
+            th, td { padding:10px; font-size:12px; }
+            .actions { flex-direction:column; gap:4px; }
         }
     </style>
 </head>
@@ -346,180 +108,168 @@
                 </thead>
                 <tbody id="stockTable"></tbody>
             </table>
-            <div class="empty-message" id="emptyMessage" style="display: none;">
+            <div class="empty-message" id="emptyMessage" style="display:none;">
                 Aucun article en stock. Commencez à en ajouter !
             </div>
         </div>
     </div>
 
     <div class="footer">
-        ✅ Données synchronisées en temps réel (localStorage)
+        ✅ Données synchronisées en temps réel (Firebase)
     </div>
 </div>
 
+<!-- ===== FIREBASE ===== -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
-    let stock = [];
-    let syncEnCours = false;
+  // ===== CONFIGURATION FIREBASE =====
+  const firebaseConfig = {
+    apiKey: "VOTRE_API_KEY",
+    authDomain: "VOTRE_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://VOTRE_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "VOTRE_PROJECT_ID",
+    storageBucket: "VOTRE_PROJECT_ID.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID"
+  };
 
-    // ===== CHARGER LES DONNEES AU DEMARRAGE =====
-    function chargerStock() {
-        try {
-            const donnees = localStorage.getItem('bcssi-stock-data');
-            if (donnees) {
-                stock = JSON.parse(donnees);
-            } else {
-                stock = [];
-            }
-        } catch (erreur) {
-            console.log('Erreur chargement:', erreur);
-            stock = [];
-        }
-        afficherTableau();
-        mettreAJourStats();
-    }
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    // ===== SAUVEGARDER LES DONNEES =====
-    function sauvegarderStock() {
-        try {
-            localStorage.setItem('bcssi-stock-data', JSON.stringify(stock));
-        } catch (erreur) {
-            console.error('Erreur sauvegarde:', erreur);
-        }
-    }
+  let stock = [];
 
-    // ===== SYNCHRONISER AVEC LES AUTRES ONGLETS =====
-    window.addEventListener('storage', function(event) {
-        if (event.key === 'bcssi-stock-data' && event.newValue) {
-            try {
-                stock = JSON.parse(event.newValue);
-                afficherTableau();
-                mettreAJourStats();
-                console.log('✅ Stock synchronisé depuis autre onglet');
-            } catch (erreur) {
-                console.log('Erreur sync:', erreur);
-            }
-        }
-    });
+  // ===== REFERENCE DE LA BASE =====
+  const stockRef = db.ref('stock');
 
-    // ===== AJOUTER UN ARTICLE =====
-    function ajouterArticle() {
-        const nom = document.getElementById('itemName').value.trim();
-        const type = document.getElementById('itemType').value;
-        const quantite = parseInt(document.getElementById('itemQty').value);
+  // ===== CHARGER LES DONNEES EN TEMPS RÉEL =====
+  stockRef.on('value', snapshot => {
+      const data = snapshot.val();
+      stock = data ? Object.values(data) : [];
+      afficherTableau();
+      mettreAJourStats();
+  });
 
-        if (!nom || !quantite || quantite <= 0) {
-            alert('Veuillez remplir tous les champs correctement');
-            return;
-        }
+  // ===== SAUVEGARDER LE STOCK =====
+  function sauvegarderStock() {
+      const updates = {};
+      stock.forEach((article, index) => {
+          updates[index] = article;
+      });
+      stockRef.set(updates);
+  }
 
-        const existant = stock.find(a => a.nom === nom && a.type === type);
-        if (existant) {
-            existant.quantite += quantite;
-        } else {
-            stock.push({ nom, type, quantite });
-        }
+  // ===== AJOUTER UN ARTICLE =====
+  function ajouterArticle() {
+      const nom = document.getElementById('itemName').value.trim();
+      const type = document.getElementById('itemType').value;
+      const quantite = parseInt(document.getElementById('itemQty').value);
 
-        reinitialiserForm();
-        afficherTableau();
-        mettreAJourStats();
-        sauvegarderStock();
-    }
+      if (!nom || !quantite || quantite <= 0) {
+          alert('Veuillez remplir tous les champs correctement');
+          return;
+      }
 
-    // ===== SUPPRIMER UN ARTICLE =====
-    function supprimerArticle(index) {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
-            stock.splice(index, 1);
-            afficherTableau();
-            mettreAJourStats();
-            sauvegarderStock();
-        }
-    }
+      const existant = stock.find(a => a.nom === nom && a.type === type);
+      if (existant) {
+          existant.quantite += quantite;
+      } else {
+          stock.push({ nom, type, quantite });
+      }
 
-    // ===== MODIFIER LA QUANTITE =====
-    function modifierQuantite(index, delta) {
-        stock[index].quantite += delta;
+      reinitialiserForm();
+      afficherTableau();
+      mettreAJourStats();
+      sauvegarderStock();
+  }
 
-        if (stock[index].quantite <= 0) {
-            supprimerArticle(index);
-        } else {
-            afficherTableau();
-            mettreAJourStats();
-            sauvegarderStock();
-        }
-    }
+  // ===== SUPPRIMER UN ARTICLE =====
+  function supprimerArticle(index) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
+          stock.splice(index, 1);
+          afficherTableau();
+          mettreAJourStats();
+          sauvegarderStock();
+      }
+  }
 
-    // ===== REINITIALISER LE FORMULAIRE =====
-    function reinitialiserForm() {
-        document.getElementById('itemName').value = '';
-        document.getElementById('itemType').value = 'arme';
-        document.getElementById('itemQty').value = '1';
-        document.getElementById('itemName').focus();
-    }
+  // ===== MODIFIER LA QUANTITE =====
+  function modifierQuantite(index, delta) {
+      stock[index].quantite += delta;
 
-    // ===== OBTENIR LE BADGE DE TYPE =====
-    function obtenirBadgeType(type) {
-        const badges = {
-            'arme': { classe: 'type-arme', label: '🔫 Arme' },
-            'munition': { classe: 'type-munition', label: '💥 Munition' },
-            'equipement': { classe: 'type-equipement', label: '🛡️ Équipement' }
-        };
-        return badges[type] || badges['equipement'];
-    }
+      if (stock[index].quantite <= 0) {
+          supprimerArticle(index);
+      } else {
+          afficherTableau();
+          mettreAJourStats();
+          sauvegarderStock();
+      }
+  }
 
-    // ===== AFFICHER LE TABLEAU =====
-    function afficherTableau() {
-        const tableau = document.getElementById('stockTable');
-        const messageVide = document.getElementById('emptyMessage');
+  // ===== REINITIALISER FORMULAIRE =====
+  function reinitialiserForm() {
+      document.getElementById('itemName').value = '';
+      document.getElementById('itemType').value = 'arme';
+      document.getElementById('itemQty').value = '1';
+      document.getElementById('itemName').focus();
+  }
 
-        if (stock.length === 0) {
-            tableau.innerHTML = '';
-            messageVide.style.display = 'block';
-            return;
-        }
+  // ===== OBTENIR BADGE =====
+  function obtenirBadgeType(type) {
+      const badges = {
+          'arme': { classe:'type-arme', label:'🔫 Arme' },
+          'munition': { classe:'type-munition', label:'💥 Munition' },
+          'equipement': { classe:'type-equipement', label:'🛡️ Équipement' }
+      };
+      return badges[type] || badges['equipement'];
+  }
 
-        messageVide.style.display = 'none';
-        tableau.innerHTML = '';
+  // ===== AFFICHER TABLEAU =====
+  function afficherTableau() {
+      const tableau = document.getElementById('stockTable');
+      const messageVide = document.getElementById('emptyMessage');
 
-        stock.forEach((article, index) => {
-            const badge = obtenirBadgeType(article.type);
-            const ligne = document.createElement('tr');
-            ligne.innerHTML = `
-                <td><strong>${article.nom}</strong></td>
-                <td><span class="type-badge ${badge.classe}">${badge.label}</span></td>
-                <td><span class="quantity">${article.quantite}</span></td>
-                <td>
-                    <div class="actions">
-                        <button class="btn-qty" onclick="modifierQuantite(${index}, 1)">+</button>
-                        <button class="btn-qty" onclick="modifierQuantite(${index}, -1)">-</button>
-                        <button class="btn-delete" onclick="supprimerArticle(${index})">Supprimer</button>
-                    </div>
-                </td>
-            `;
-            tableau.appendChild(ligne);
-        });
-    }
+      if(stock.length === 0){
+          tableau.innerHTML = '';
+          messageVide.style.display = 'block';
+          return;
+      }
 
-    // ===== METTRE A JOUR LES STATISTIQUES =====
-    function mettreAJourStats() {
-        const totalQuantite = stock.reduce((somme, article) => somme + article.quantite, 0);
-        const armes = stock.filter(a => a.type === 'arme').reduce((somme, article) => somme + article.quantite, 0);
-        const munitions = stock.filter(a => a.type === 'munition').reduce((somme, article) => somme + article.quantite, 0);
-        const equipements = stock.filter(a => a.type === 'equipement').reduce((somme, article) => somme + article.quantite, 0);
+      messageVide.style.display = 'none';
+      tableau.innerHTML = '';
 
-        document.getElementById('totalItems').textContent = totalQuantite;
-        document.getElementById('weaponCount').textContent = armes;
-        document.getElementById('ammoCount').textContent = munitions;
-        document.getElementById('equipCount').textContent = equipements;
-    }
+      stock.forEach((article,index)=>{
+          const badge = obtenirBadgeType(article.type);
+          const ligne = document.createElement('tr');
+          ligne.innerHTML = `
+              <td><strong>${article.nom}</strong></td>
+              <td><span class="type-badge ${badge.classe}">${badge.label}</span></td>
+              <td><span class="quantity">${article.quantite}</span></td>
+              <td>
+                  <div class="actions">
+                      <button class="btn-qty" onclick="modifierQuantite(${index},1)">+</button>
+                      <button class="btn-qty" onclick="modifierQuantite(${index},-1)">-</button>
+                      <button class="btn-delete" onclick="supprimerArticle(${index})">Supprimer</button>
+                  </div>
+              </td>
+          `;
+          tableau.appendChild(ligne);
+      });
+  }
 
-    // ===== DEMARRAGE =====
-    chargerStock();
+  // ===== METTRE À JOUR STATISTIQUES =====
+  function mettreAJourStats() {
+      const totalQuantite = stock.reduce((somme, a)=>somme+a.quantite,0);
+      const armes = stock.filter(a=>a.type==='arme').reduce((somme,a)=>somme+a.quantite,0);
+      const munitions = stock.filter(a=>a.type==='munition').reduce((somme,a)=>somme+a.quantite,0);
+      const equipements = stock.filter(a=>a.type==='equipement').reduce((somme,a)=>somme+a.quantite,0);
 
-    // ===== SYNCHRONISATION AUTOMATIQUE TOUTES LES 3 SECONDES =====
-    setInterval(() => {
-        // Les changements dans d'autres onglets sont détectés via l'event listener
-    }, 3000);
+      document.getElementById('totalItems').textContent = totalQuantite;
+      document.getElementById('weaponCount').textContent = armes;
+      document.getElementById('ammoCount').textContent = munitions;
+      document.getElementById('equipCount').textContent = equipements;
+  }
 </script>
-
 </body>
 </html>
