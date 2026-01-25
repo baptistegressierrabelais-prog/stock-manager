@@ -2,122 +2,373 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>BCSSI – Gestionnaire de Stock</title>
+    <title>BCSSI – Gestionnaire de Stock Sheriff</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', Helvetica, sans-serif;
             background: rgba(10, 10, 15, 0.95);
             color: #ffffff;
         }
+
         .container {
-            width: 900px;
+            width: 1000px;
             margin: 40px auto;
             background: #141824;
             border-radius: 12px;
             box-shadow: 0 0 25px rgba(0,0,0,0.6);
-            padding: 20px;
+            padding: 0;
+            overflow: hidden;
         }
-        h1 {
+
+        .header {
+            background: linear-gradient(135deg, #0f4c3a 0%, #1a7c5e 100%);
+            padding: 25px;
             text-align: center;
-            margin-bottom: 20px;
+            border-bottom: 2px solid #0f4c3a;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 12px;
+            opacity: 0.8;
             letter-spacing: 1px;
         }
+
+        .content {
+            padding: 20px;
+        }
+
         .top-bar {
             display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
             justify-content: space-between;
-            margin-bottom: 15px;
+            align-items: center;
         }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            min-width: 300px;
+        }
+
         input, select, button {
-            padding: 10px;
+            padding: 12px 15px;
             border-radius: 6px;
             border: none;
             outline: none;
-            font-size: 14px;
+            font-size: 13px;
+            transition: all 0.3s;
         }
+
         input, select {
             background: #1e2333;
             color: #fff;
+            flex: 1;
         }
-        button {
-            background: #2e6cff;
+
+        input::placeholder {
+            color: #888;
+        }
+
+        input:focus, select:focus {
+            background: #242d40;
+            box-shadow: 0 0 8px rgba(26, 124, 94, 0.3);
+        }
+
+        .btn-add {
+            background: #1a7c5e;
             color: #fff;
             cursor: pointer;
+            padding: 12px 25px;
+            font-weight: 600;
+            min-width: 150px;
         }
-        button:hover {
-            background: #2557cc;
+
+        .btn-add:hover {
+            background: #0f4c3a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 124, 94, 0.4);
         }
+
+        .btn-clear {
+            background: #3b3f55;
+            color: #fff;
+            cursor: pointer;
+            padding: 12px 20px;
+            font-weight: 600;
+        }
+
+        .btn-clear:hover {
+            background: #4a5070;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #1e2333;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #1a7c5e;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a7c5e;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
         }
+
         th, td {
-            padding: 12px;
-            text-align: center;
+            padding: 13px 15px;
+            text-align: left;
             border-bottom: 1px solid #2a2f45;
         }
+
         th {
             background: #1b2030;
-        }
-        .actions button {
-            margin: 0 3px;
-            padding: 6px 10px;
+            font-weight: 600;
+            text-transform: uppercase;
             font-size: 12px;
+            letter-spacing: 0.5px;
+            color: #1a7c5e;
         }
-        .danger {
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #1a1f30;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-arme {
             background: #c0392b;
+            color: white;
         }
-        .danger:hover {
+
+        .type-munition {
+            background: #ff9800;
+            color: white;
+        }
+
+        .type-equipement {
+            background: #1a7c5e;
+            color: white;
+        }
+
+        .quantity {
+            font-weight: 700;
+            color: #1a7c5e;
+            font-size: 15px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .btn-qty {
+            background: #1a7c5e;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+            min-width: 35px;
+        }
+
+        .btn-qty:hover {
+            background: #0f4c3a;
+            transform: scale(1.05);
+        }
+
+        .btn-delete {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
             background: #992d22;
+            transform: scale(1.05);
         }
-        .success {
-            background: #27ae60;
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 14px;
         }
-        .success:hover {
-            background: #1e8c4c;
+
+        .footer {
+            background: #1b2030;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #2a2f45;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            .input-group {
+                flex-direction: column;
+                min-width: unset;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 4px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>BCSSI – Gestionnaire de Stock</h1>
-
-    <div class="top-bar">
-        <input type="text" id="itemName" placeholder="Nom de l'équipement">
-        <select id="itemType">
-            <option value="arme">Arme</option>
-            <option value="munition">Munition</option>
-            <option value="equipement">Équipement</option>
-        </select>
-        <input type="number" id="itemQty" placeholder="Quantité" min="1">
-        <button onclick="addItem()">Ajouter</button>
+    <div class="header">
+        <h1>🚓 BCSSI – GESTIONNAIRE DE STOCK</h1>
+        <p>Sheriff - Sunny Island | Gestion d'armurerie</p>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Type</th>
-                <th>Quantité</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="stockTable"></tbody>
-    </table>
+    <div class="content">
+        <div class="top-bar">
+            <div class="input-group">
+                <input type="text" id="itemName" placeholder="Nom de l'équipement">
+                <select id="itemType">
+                    <option value="arme">🔫 Arme</option>
+                    <option value="munition">💥 Munition</option>
+                    <option value="equipement">🛡️ Équipement</option>
+                </select>
+                <input type="number" id="itemQty" placeholder="Quantité" min="1" value="1">
+            </div>
+            <button class="btn-add" onclick="addItem()">+ Ajouter</button>
+            <button class="btn-clear" onclick="clearForm()">Réinitialiser</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Articles</div>
+                <div class="stat-number" id="totalItems">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Armes</div>
+                <div class="stat-number" id="weaponCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Munitions</div>
+                <div class="stat-number" id="ammoCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Équipements</div>
+                <div class="stat-number" id="equipCount">0</div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Type</th>
+                        <th>Quantité</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTable"></tbody>
+            </table>
+            <div class="empty-message" id="emptyMessage" style="display: none;">
+                Aucun article en stock. Commencez à en ajouter !
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Synchronisation en direct avec le serveur FiveM
+    </div>
 </div>
 
 <script>
     let stock = [];
 
     function addItem() {
-        const name = document.getElementById('itemName').value;
+        const name = document.getElementById('itemName').value.trim();
         const type = document.getElementById('itemType').value;
         const qty = parseInt(document.getElementById('itemQty').value);
 
-        if (!name || !qty || qty <= 0) return;
+        if (!name || !qty || qty <= 0) {
+            alert('Veuillez remplir tous les champs correctement');
+            return;
+        }
 
         const existing = stock.find(i => i.name === name && i.type === type);
         if (existing) {
@@ -125,59 +376,118 @@
         } else {
             stock.push({ name, type, qty });
         }
+
+        clearForm();
         render();
         sendToFiveM();
     }
 
     function removeItem(index) {
-        stock.splice(index, 1);
-        render();
-        sendToFiveM();
+        if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
+            stock.splice(index, 1);
+            render();
+            sendToFiveM();
+        }
     }
 
     function changeQty(index, delta) {
         stock[index].qty += delta;
-        if (stock[index].qty <= 0) stock.splice(index, 1);
-        render();
-        sendToFiveM();
+        if (stock[index].qty <= 0) {
+            removeItem(index);
+        } else {
+            render();
+            sendToFiveM();
+        }
+    }
+
+    function clearForm() {
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemType').value = 'arme';
+        document.getElementById('itemQty').value = '1';
+        document.getElementById('itemName').focus();
+    }
+
+    function getTypeBadge(type) {
+        const types = {
+            'arme': { class: 'type-arme', label: '🔫 Arme' },
+            'munition': { class: 'type-munition', label: '💥 Munition' },
+            'equipement': { class: 'type-equipement', label: '🛡️ Équipement' }
+        };
+        return types[type] || types['equipement'];
+    }
+
+    function updateStats() {
+        const totalItems = stock.reduce((sum, item) => sum + item.qty, 0);
+        const weaponCount = stock.filter(i => i.type === 'arme').reduce((sum, item) => sum + item.qty, 0);
+        const ammoCount = stock.filter(i => i.type === 'munition').reduce((sum, item) => sum + item.qty, 0);
+        const equipCount = stock.filter(i => i.type === 'equipement').reduce((sum, item) => sum + item.qty, 0);
+
+        document.getElementById('totalItems').textContent = totalItems;
+        document.getElementById('weaponCount').textContent = weaponCount;
+        document.getElementById('ammoCount').textContent = ammoCount;
+        document.getElementById('equipCount').textContent = equipCount;
     }
 
     function render() {
         const table = document.getElementById('stockTable');
+        const emptyMessage = document.getElementById('emptyMessage');
+
+        if (stock.length === 0) {
+            table.innerHTML = '';
+            emptyMessage.style.display = 'block';
+            updateStats();
+            return;
+        }
+
+        emptyMessage.style.display = 'none';
         table.innerHTML = '';
+
         stock.forEach((item, i) => {
-            table.innerHTML += `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>${item.type}</td>
-                    <td>${item.qty}</td>
-                    <td class="actions">
-                        <button class="success" onclick="changeQty(${i}, 1)">+</button>
-                        <button class="danger" onclick="changeQty(${i}, -1)">-</button>
-                        <button class="danger" onclick="removeItem(${i})">Supprimer</button>
-                    </td>
-                </tr>`;
+            const typeBadge = getTypeBadge(item.type);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${item.name}</strong></td>
+                <td><span class="type-badge ${typeBadge.class}">${typeBadge.label}</span></td>
+                <td><span class="quantity">${item.qty}</span></td>
+                <td>
+                    <div class="actions">
+                        <button class="btn-qty" onclick="changeQty(${i}, 1)">+</button>
+                        <button class="btn-qty" onclick="changeQty(${i}, -1)">-</button>
+                        <button class="btn-delete" onclick="removeItem(${i})">Supprimer</button>
+                    </div>
+                </td>
+            `;
+            table.appendChild(row);
         });
+
+        updateStats();
     }
 
     function sendToFiveM() {
-        fetch(`https://${GetParentResourceName()}/updateStock`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(stock)
-        });
+        if (typeof GetParentResourceName === 'function') {
+            fetch(`https://${GetParentResourceName()}/updateStock`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(stock)
+            }).catch(err => console.log('Sync FiveM...'));
+        }
     }
 
     window.addEventListener('message', function(event) {
-        if (event.data.action === 'open') {
+        const data = event.data;
+        if (data.action === 'open') {
             document.body.style.display = 'block';
-            stock = event.data.stock || [];
+            stock = data.stock || [];
             render();
+            clearForm();
         }
-        if (event.data.action === 'close') {
+        if (data.action === 'close') {
             document.body.style.display = 'none';
         }
     });
+
+    // Initialisation
+    render();
 </script>
 
 </body>
