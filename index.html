@@ -477,7 +477,7 @@
     async function saveStockPersistent() {
         try {
             await window.storage.set('bcssi-sheriff-stock', JSON.stringify(stock), true);
-            console.log('✅ Stock sauvegardé avec succès');
+            console.log('✅ Stock sauvegardé');
         } catch (err) {
             console.log('Erreur sauvegarde:', err);
         }
@@ -488,9 +488,11 @@
             const result = await window.storage.get('bcssi-sheriff-stock', true);
             if (result && result.value) {
                 const sharedStock = JSON.parse(result.value);
-                // Fusionner les données
-                stock = sharedStock;
-                render();
+                // Vérifier si les données ont changé
+                if (JSON.stringify(stock) !== JSON.stringify(sharedStock)) {
+                    stock = sharedStock;
+                    render();
+                }
             }
         } catch (e) {
             console.log('Sync en cours...');
@@ -526,10 +528,15 @@
     // Initialisation - Charger les données sauvegardées
     loadStock();
 
-    // Synchronisation en temps réel toutes les 2 secondes
+    // Synchronisation en temps réel toutes les 3 secondes SEULEMENT si pas de modification
+    let lastSyncTime = 0;
     setInterval(() => {
-        syncStock();
-    }, 2000);
+        const now = Date.now();
+        if (now - lastSyncTime > 3000) {
+            syncStock();
+            lastSyncTime = now;
+        }
+    }, 1000);
 </script>
 
 </body>
