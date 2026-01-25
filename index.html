@@ -502,10 +502,11 @@
             const result = await window.storage.get('bcssi-sheriff-stock', true);
             if (result && result.value) {
                 stock = JSON.parse(result.value);
-                render();
             }
+            render();
         } catch (e) {
-            console.log('Pas de données sauvegardées');
+            console.log('Pas de données sauvegardées, démarrage avec stock vide');
+            render();
         }
     }
 
