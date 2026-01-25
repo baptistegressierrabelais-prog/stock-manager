@@ -612,10 +612,14 @@
           <tr>
             <th>Objet</th>
             <th style="text-align: right;">Quantité</th>
+            <th style="text-align: right;">Affichage</th>
             <th style="text-align: center;">Action</th>
           </tr>
         `;
         table.appendChild(thead);
+
+        // Trier par quantité croissante
+        items.sort((a, b) => a.qty - b.qty);
 
         const tbody = document.createElement('tbody');
         items.forEach(item => {
@@ -623,6 +627,7 @@
           tr.innerHTML = `
             <td>${item.name}</td>
             <td style="text-align: right;"><input type="number" id="qty-${item.id}" value="${item.qty}" min="0" class="qty-input"></td>
+            <td style="text-align: right;"><span class="qty-badge">${item.qty.toLocaleString('fr-FR')}</span></td>
             <td class="action-cell">
               <button class="btn-update" onclick="updateItem('${item.id}', document.getElementById('qty-${item.id}').value)">✓</button>
               <button class="btn-danger" onclick="removeItem('${item.id}')">✕</button>
@@ -686,8 +691,8 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${item.name}</td>
-          <td style="text-align: center;"><span class="qty-badge">${item.qty}</span></td>
-          <td style="text-align: center;"><span class="qty-badge" style="background: #dc2626; color: white;">+${item.neededQty}</span></td>
+          <td style="text-align: center;"><span class="qty-badge">${item.qty.toLocaleString('fr-FR')}</span></td>
+          <td style="text-align: center;"><span class="qty-badge" style="background: #dc2626; color: white;">+${item.neededQty.toLocaleString('fr-FR')}</span></td>
         `;
         tbody.appendChild(tr);
       });
