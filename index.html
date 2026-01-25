@@ -401,9 +401,9 @@
   <div id="vehicles" class="tab-content">
     <div class="form-section">
       <div class="form-group">
-        <div class="input-group" style="flex: 0 1 120px;">
-          <label for="vehicleNumber">Matricule (1-99)</label>
-          <input id="vehicleNumber" type="number" placeholder="1" min="1" max="99" />
+        <div class="input-group" style="flex: 0 1 140px;">
+          <label for="vehicleNumber">Matricule (01-99)</label>
+          <input id="vehicleNumber" type="text" placeholder="01" maxlength="2" pattern="\d{2}" />
         </div>
         <div class="input-group">
           <label for="vehicleName">Nom du véhicule</label>
@@ -486,15 +486,18 @@
 
   // VÉHICULES
   window.addVehicle = async () => {
-    const number = Number(document.getElementById('vehicleNumber').value);
+    const numberStr = document.getElementById('vehicleNumber').value.trim();
     const name = document.getElementById('vehicleName').value.trim();
     const plate = document.getElementById('vehiclePlate').value.trim();
     
-    if (!number || number < 1 || number > 99 || !name || !plate) return;
+    if (!numberStr || numberStr.length !== 2 || !name || !plate) return;
     
-    const docId = `vehicle_${number}`;
+    const number = parseInt(numberStr, 10);
+    if (isNaN(number) || number < 1 || number > 99) return;
+    
+    const docId = `vehicle_${String(number).padStart(2, '0')}`;
     await setDoc(doc(vehiclesRef, docId), {
-      number,
+      number: String(number).padStart(2, '0'),
       name,
       plate
     });
@@ -612,14 +615,18 @@
       });
     });
 
-    vehicles.sort((a, b) => a.number - b.number);
+    vehicles.sort((a, b) => {
+      const numA = parseInt(a.number, 10);
+      const numB = parseInt(b.number, 10);
+      return numA - numB;
+    });
 
     vehicles.forEach(vehicle => {
       const card = document.createElement('div');
       card.className = 'vehicle-card';
       card.innerHTML = `
         <div class="vehicle-header">
-          <div class="vehicle-number">#${vehicle.number}</div>
+          <div class="vehicle-number">BC ${vehicle.number}</div>
           <div class="vehicle-info">
             <h3>${vehicle.name}</h3>
             <div class="vehicle-plate">${vehicle.plate}</div>
