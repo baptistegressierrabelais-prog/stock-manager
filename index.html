@@ -205,6 +205,32 @@
       text-align: center;
     }
 
+    .qty-input-cell input {
+      width: 80px;
+      padding: 6px;
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #e5e7eb;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .qty-input-cell input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .btn-update {
+      background: linear-gradient(135deg, #10b981, #059669);
+      padding: 4px 10px;
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    .btn-update:hover {
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
     @media (max-width: 768px) {
       .categories {
         grid-template-columns: 1fr;
@@ -223,8 +249,7 @@
 <body>
 <div class="container">
   <header>
-    <h1>🏝️ Sunny Island - Gestion de Stock</h1>
-    <p class="subtitle">Gestion des ressources FiveM</p>
+    <h1>🏝️ Blaine County Sheriff Sunny Island - Gestion de Stock</h1>
   </header>
 
   <div class="form-section">
@@ -234,6 +259,7 @@
         <select id="category">
           <option value="Armes">🔫 Armes</option>
           <option value="Munitions">💣 Munitions</option>
+          <option value="Équipement">🧥 Équipement</option>
           <option value="Divers">📦 Divers</option>
         </select>
       </div>
@@ -269,6 +295,7 @@
   const categories = {
     "Armes": { icon: "🔫", color: "#ef4444" },
     "Munitions": { icon: "💣", color: "#f97316" },
+    "Équipement": { icon: "🧥", color: "#06b6d4" },
     "Divers": { icon: "📦", color: "#8b5cf6" }
   };
 
@@ -293,6 +320,17 @@
 
   window.removeItem = async (docId) => {
     await deleteDoc(doc(stockRef, docId));
+  };
+
+  window.updateItem = async (docId, newQty) => {
+    const qty = Number(newQty);
+    if (qty < 0) return;
+    
+    const docRef = doc(stockRef, docId);
+    const snapshot = await getFirestore(app).collection('stock').doc(docId).get();
+    if (snapshot.exists()) {
+      await setDoc(docRef, { ...snapshot.data(), qty }, { merge: true });
+    }
   };
 
   onSnapshot(stockRef, (snapshot) => {
@@ -352,8 +390,11 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${item.name}</td>
-            <td style="text-align: right;"><span class="qty-badge">${item.qty}</span></td>
-            <td class="action-cell"><button class="btn-danger" onclick="removeItem('${item.id}')">Supprimer</button></td>
+            <td style="text-align: right;"><input type="number" id="qty-${item.id}" value="${item.qty}" min="0" class="qty-input"></td>
+            <td class="action-cell">
+              <button class="btn-update" onclick="updateItem('${item.id}', document.getElementById('qty-${item.id}').value)">✓</button>
+              <button class="btn-danger" onclick="removeItem('${item.id}')">✕</button>
+            </td>
           `;
           tbody.appendChild(tr);
         });
