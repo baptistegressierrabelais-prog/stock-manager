@@ -384,6 +384,7 @@
   <div class="tabs">
     <button class="tab-btn active" onclick="window.switchTab('inventory')">📦 Inventaire</button>
     <button class="tab-btn" onclick="window.switchTab('vehicles')">🚗 Véhicules</button>
+    <button class="tab-btn" onclick="window.switchTab('orders')">🛒 Commandes</button>
   </div>
 
   <!-- TAB: INVENTAIRE -->
@@ -435,6 +436,11 @@
     </div>
 
     <div class="vehicles-grid" id="vehiclesContainer"></div>
+  </div>
+
+  <!-- TAB: COMMANDES -->
+  <div id="orders" class="tab-content">
+    <div class="categories" id="ordersContainer"></div>
   </div>
 </div>
 
@@ -539,6 +545,7 @@
   // RENDU INVENTAIRE
   onSnapshot(stockRef, (snapshot) => {
     const data = {};
+    const lowStockItems = {};
     
     snapshot.forEach(docu => {
       const item = docu.data();
@@ -551,8 +558,29 @@
         id: docu.id,
         ...item
       });
+
+      // Vérifier les seuils de stock faible
+      const thresholds = {
+        "Armes": 5,
+        "Munitions": 5000,
+        "Équipement": 5,
+        "Divers": 50
+      };
+
+      const threshold = thresholds[category] || 0;
+      if (item.qty < threshold) {
+        if (!lowStockItems[category]) {
+          lowStockItems[category] = [];
+        }
+        lowStockItems[category].push({
+          id: docu.id,
+          ...item,
+          neededQty: threshold - item.qty
+        });
+      }
     });
 
+    // Rendu inventaire
     const container = document.getElementById('categoriesContainer');
     container.innerHTML = '';
 
@@ -607,6 +635,66 @@
       }
 
       container.appendChild(categoryDiv);
+    });
+
+    // Rendu onglet commandes
+    const ordersContainer = document.getElementById('ordersContainer');
+    ordersContainer.innerHTML = '';
+
+    const hasLowStock = Object.values(lowStockItems).some(arr => arr.length > 0);
+
+    if (!hasLowStock) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-message';
+      empty.style.gridColumn = '1 / -1';
+      empty.textContent = 'Tous les stocks sont suffisants ✓';
+      ordersContainer.appendChild(empty);
+      return;
+    }
+
+    Object.keys(categories).forEach(cat => {
+      const items = lowStockItems[cat] || [];
+      if (items.length === 0) return;
+
+      const catInfo = categories[cat];
+      
+      const categoryDiv = document.createElement('div');
+      categoryDiv.className = 'category';
+      
+      const header = document.createElement('div');
+      header.className = 'category-header';
+      header.innerHTML = `
+        <span class="category-icon">${catInfo.icon}</span>
+        <span>${cat}</span>
+        <span class="category-count">${items.length}</span>
+      `;
+      categoryDiv.appendChild(header);
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      thead.innerHTML = `
+        <tr>
+          <th>Objet</th>
+          <th style="text-align: center;">Stock actuel</th>
+          <th style="text-align: center;">À commander</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      items.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.name}</td>
+          <td style="text-align: center;"><span class="qty-badge">${item.qty}</span></td>
+          <td style="text-align: center;"><span class="qty-badge" style="background: #dc2626; color: white;">+${item.neededQty}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      categoryDiv.appendChild(table);
+
+      ordersContainer.appendChild(categoryDiv);
     });
   });
 
