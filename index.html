@@ -270,16 +270,19 @@
 
     .vehicles-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: 1fr;
       gap: 20px;
     }
 
     .vehicle-card {
       background: #1e293b;
       border-radius: 12px;
-      padding: 20px;
+      padding: 0;
       border: 1px solid #334155;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
     }
 
     .vehicle-card:hover {
@@ -290,22 +293,38 @@
     .vehicle-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #334155;
+      gap: 0;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+      flex: 1;
+      width: 100%;
+      height: 70px;
     }
 
     .vehicle-number {
-      font-size: 28px;
+      font-size: 16px;
       font-weight: 700;
       color: #3b82f6;
-      min-width: 80px;
+      min-width: 150px;
+      text-align: center;
+      padding: 0 20px;
+      border-right: 1px solid #334155;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .vehicle-info {
       flex: 1;
       text-align: center;
+      padding: 0 20px;
+      border-right: 1px solid #334155;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .vehicle-info h3 {
@@ -317,13 +336,18 @@
     .vehicle-plate {
       background: #fbbf24;
       color: #000;
-      padding: 4px 8px;
+      padding: 6px 12px;
       border-radius: 4px;
       font-weight: 600;
       font-size: 14px;
       word-break: break-all;
       text-align: center;
       margin-top: 0;
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .vehicle-actions {
