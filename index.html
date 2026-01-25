@@ -1,3 +1,39 @@
+<!-- 1. Scripts Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  // 2. Configuration Firebase (remplacer par tes infos)
+const firebaseConfig = {
+  apiKey: "AIzaSyBWHyADypkFFxslXd_9b2EvJIdFUq62qjY",
+  authDomain: "bcssi-stock.firebaseapp.com",
+  databaseURL: "https://bcssi-stock-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bcssi-stock",
+  storageBucket: "bcssi-stock.firebasestorage.app",
+  messagingSenderId: "559081692563",
+  appId: "1:559081692563:web:b4202936130ed30c21dc66"
+};
+
+  // 3. Initialisation Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // ===== ÉTAPE 5 : Créer la référence du stock =====
+  const db = firebase.database();        // On récupère la base de données
+  const stockRef = db.ref('stock');      // On crée la référence vers le “dossier stock”
+
+  // 4. Charger les données en temps réel
+  stockRef.on('value', snapshot => {
+      const data = snapshot.val();
+      stock = data ? Object.values(data) : [];
+      afficherTableau();
+      mettreAJourStats();
+  });
+
+  // 5. Les fonctions sauvegarderStock(), ajouterArticle(), etc. utilisent stockRef
+</script>
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -273,3 +309,4 @@
 </script>
 </body>
 </html>
+
