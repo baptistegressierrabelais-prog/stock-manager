@@ -353,7 +353,7 @@
     </div>
 
     <div class="footer">
-        Synchronisation en direct entre utilisateurs du site
+        ✅ Données synchronisées en temps réel (localStorage)
     </div>
 </div>
 
@@ -362,14 +362,16 @@
     let syncEnCours = false;
 
     // ===== CHARGER LES DONNEES AU DEMARRAGE =====
-    async function chargerStock() {
+    function chargerStock() {
         try {
-            const resultat = await window.storage.get('bcssi-stock-data', true);
-            if (resultat && resultat.value) {
-                stock = JSON.parse(resultat.value);
+            const donnees = localStorage.getItem('bcssi-stock-data');
+            if (donnees) {
+                stock = JSON.parse(donnees);
+            } else {
+                stock = [];
             }
         } catch (erreur) {
-            console.log('Pas de données, démarrage avec stock vide');
+            console.log('Erreur chargement:', erreur);
             stock = [];
         }
         afficherTableau();
@@ -377,38 +379,27 @@
     }
 
     // ===== SAUVEGARDER LES DONNEES =====
-    async function sauvegarderStock() {
+    function sauvegarderStock() {
         try {
-            await window.storage.set('bcssi-stock-data', JSON.stringify(stock), true);
+            localStorage.setItem('bcssi-stock-data', JSON.stringify(stock));
         } catch (erreur) {
             console.error('Erreur sauvegarde:', erreur);
         }
     }
 
-    // ===== SYNCHRONISER AVEC LES AUTRES UTILISATEURS =====
-    async function synchroniserStock() {
-        if (syncEnCours) return;
-        syncEnCours = true;
-
-        try {
-            const resultat = await window.storage.get('bcssi-stock-data', true);
-            if (resultat && resultat.value) {
-                const stockDistant = JSON.parse(resultat.value);
-                const stockLocal = JSON.stringify(stock);
-                const stockDistantStr = JSON.stringify(stockDistant);
-
-                if (stockLocal !== stockDistantStr) {
-                    stock = stockDistant;
-                    afficherTableau();
-                    mettreAJourStats();
-                }
+    // ===== SYNCHRONISER AVEC LES AUTRES ONGLETS =====
+    window.addEventListener('storage', function(event) {
+        if (event.key === 'bcssi-stock-data' && event.newValue) {
+            try {
+                stock = JSON.parse(event.newValue);
+                afficherTableau();
+                mettreAJourStats();
+                console.log('✅ Stock synchronisé depuis autre onglet');
+            } catch (erreur) {
+                console.log('Erreur sync:', erreur);
             }
-        } catch (erreur) {
-            console.log('Erreur sync');
         }
-
-        syncEnCours = false;
-    }
+    });
 
     // ===== AJOUTER UN ARTICLE =====
     function ajouterArticle() {
@@ -526,7 +517,7 @@
 
     // ===== SYNCHRONISATION AUTOMATIQUE TOUTES LES 3 SECONDES =====
     setInterval(() => {
-        synchroniserStock();
+        // Les changements dans d'autres onglets sont détectés via l'event listener
     }, 3000);
 </script>
 
