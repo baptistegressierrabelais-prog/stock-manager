@@ -5,74 +5,373 @@
   <title>Gestion de stock – Sunny Island</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body { font-family: Arial, sans-serif; background:#0f172a; color:#e5e7eb; padding:20px }
-    h1 { font-size:24px }
-    table { width:100%; border-collapse: collapse; margin-top:20px }
-    th, td { border:1px solid #334155; padding:8px; text-align:left }
-    th { background:#1e293b }
-    input, button { padding:6px; margin:4px }
-    button { cursor:pointer }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
+      color: #e5e7eb;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .form-section {
+      background: #1e293b;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      border: 1px solid #334155;
+    }
+
+    .form-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .input-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #e5e7eb;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    button {
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-danger:hover {
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 24px;
+    }
+
+    .category {
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #334155;
+      transition: all 0.3s ease;
+    }
+
+    .category:hover {
+      border-color: #475569;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    }
+
+    .category-header {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      padding: 16px;
+      font-weight: 600;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-icon {
+      font-size: 20px;
+    }
+
+    .category-count {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+
+    th {
+      background: #0f172a;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    td {
+      color: #cbd5e1;
+    }
+
+    .qty-badge {
+      display: inline-block;
+      background: #334155;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+
+    .empty-message {
+      padding: 24px;
+      text-align: center;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .action-cell {
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .categories {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group {
+        flex-direction: column;
+      }
+
+      .input-group {
+        min-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
+<div class="container">
+  <header>
+    <h1>🏝️ Sunny Island - Gestion de Stock</h1>
+    <p class="subtitle">Gestion des ressources FiveM</p>
+  </header>
 
-<h1>Gestion de stock – Sunny Island (FiveM)</h1>
+  <div class="form-section">
+    <div class="form-group">
+      <div class="input-group">
+        <label for="category">Catégorie</label>
+        <select id="category">
+          <option value="Armes">🔫 Armes</option>
+          <option value="Munitions">💣 Munitions</option>
+          <option value="Divers">📦 Divers</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="item">Nom de l'objet</label>
+        <input id="item" type="text" placeholder="Ex: AK47, 9mm, etc." />
+      </div>
+      <div class="input-group" style="flex: 0 1 120px;">
+        <label for="qty">Quantité</label>
+        <input id="qty" type="number" placeholder="0" min="0" />
+      </div>
+      <button onclick="addItem()">Ajouter / Mettre à jour</button>
+    </div>
+  </div>
 
-<div>
-  <input id="item" placeholder="Nom de l'objet" />
-  <input id="qty" type="number" placeholder="Quantité" />
-  <button onclick="addItem()">Ajouter / Mettre à jour</button>
+  <div class="categories" id="categoriesContainer"></div>
 </div>
-
-<table>
-  <thead>
-    <tr>
-      <th>Objet</th>
-      <th>Quantité</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody id="stock"></tbody>
-</table>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+  
   const firebaseConfig = {
     apiKey: "AIzaSyBWHyADypkFFxslXd_9b2EvJIdFUq62qjY",
     authDomain: "bcssi-stock.firebaseapp.com",
     projectId: "bcssi-stock",
   };
-
+  
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const stockRef = collection(db, "stock");
 
-  window.addItem = async () => {
-    const name = document.getElementById('item').value.trim();
-    const qty = Number(document.getElementById('qty').value);
-    if (!name || qty < 0) return;
-    await setDoc(doc(stockRef, name), { qty });
+  const categories = {
+    "Armes": { icon: "🔫", color: "#ef4444" },
+    "Munitions": { icon: "💣", color: "#f97316" },
+    "Divers": { icon: "📦", color: "#8b5cf6" }
   };
 
-  window.removeItem = async (name) => {
-    await deleteDoc(doc(stockRef, name));
+  window.addItem = async () => {
+    const category = document.getElementById('category').value;
+    const name = document.getElementById('item').value.trim();
+    const qty = Number(document.getElementById('qty').value);
+    
+    if (!name || qty < 0) return;
+    
+    const docId = `${category}__${name}`;
+    await setDoc(doc(stockRef, docId), { 
+      category,
+      name,
+      qty 
+    });
+    
+    document.getElementById('item').value = '';
+    document.getElementById('qty').value = '';
+    document.getElementById('item').focus();
+  };
+
+  window.removeItem = async (docId) => {
+    await deleteDoc(doc(stockRef, docId));
   };
 
   onSnapshot(stockRef, (snapshot) => {
-    const tbody = document.getElementById('stock');
-    tbody.innerHTML = "";
+    const data = {};
+    
     snapshot.forEach(docu => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${docu.id}</td>
-        <td>${docu.data().qty}</td>
-        <td><button onclick=\"removeItem('${docu.id}')\">Supprimer</button></td>`;
-      tbody.appendChild(tr);
+      const item = docu.data();
+      const category = item.category || "Divers";
+      
+      if (!data[category]) {
+        data[category] = [];
+      }
+      data[category].push({
+        id: docu.id,
+        ...item
+      });
+    });
+
+    const container = document.getElementById('categoriesContainer');
+    container.innerHTML = '';
+
+    Object.keys(categories).forEach(cat => {
+      const items = data[cat] || [];
+      const catInfo = categories[cat];
+      
+      const categoryDiv = document.createElement('div');
+      categoryDiv.className = 'category';
+      
+      const header = document.createElement('div');
+      header.className = 'category-header';
+      header.innerHTML = `
+        <span class="category-icon">${catInfo.icon}</span>
+        <span>${cat}</span>
+        <span class="category-count">${items.length}</span>
+      `;
+      categoryDiv.appendChild(header);
+
+      if (items.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-message';
+        empty.textContent = 'Aucun objet';
+        categoryDiv.appendChild(empty);
+      } else {
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+          <tr>
+            <th>Objet</th>
+            <th style="text-align: right;">Quantité</th>
+            <th style="text-align: center;">Action</th>
+          </tr>
+        `;
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        items.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.name}</td>
+            <td style="text-align: right;"><span class="qty-badge">${item.qty}</span></td>
+            <td class="action-cell"><button class="btn-danger" onclick="removeItem('${item.id}')">Supprimer</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        categoryDiv.appendChild(table);
+      }
+
+      container.appendChild(categoryDiv);
     });
   });
-</script>
 
+  document.getElementById('item').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addItem();
+  });
+
+  document.getElementById('qty').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addItem();
+  });
+</script>
 </body>
 </html>
