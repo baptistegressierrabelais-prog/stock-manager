@@ -327,10 +327,7 @@
     if (qty < 0) return;
     
     const docRef = doc(stockRef, docId);
-    const snapshot = await getFirestore(app).collection('stock').doc(docId).get();
-    if (snapshot.exists()) {
-      await setDoc(docRef, { ...snapshot.data(), qty }, { merge: true });
-    }
+    await setDoc(docRef, { qty }, { merge: true });
   };
 
   onSnapshot(stockRef, (snapshot) => {
