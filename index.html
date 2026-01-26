@@ -1,4 +1,36 @@
-<!DOCTYPE html>
+window.editVehicle = (number, name, plate) => {
+    document.getElementById('vehicleNumber').value = number;
+    document.getElementById('vehicleName').value = name;
+    document.getElementById('vehiclePlate').value = plate;
+    document.getElementById('vehicleNumber').focus();
+  };
+
+  // RÉPARATIONS
+  window.addRepair = async () => {
+    const weapon = document.getElementById('repairWeapon').value.trim();
+    const qty = Number(document.getElementById('repairQty').value);
+    
+    if (!weapon || qty < 0) return;
+    
+    const docId = `repair_${weapon}_${Date.now()}`;
+    await setDoc(doc(repairsRef, docId), {
+      weapon,
+      qty,
+      createdAt: new Date().toISOString()
+    });
+    
+    document.getElementById('repairWeapon').value = '';
+    document.getElementById('repairQty').value = '';
+    document.getElementById('repairWeapon').focus();
+  };
+
+  window.removeRepair = async (docId) => {
+    await deleteDoc(doc(repairsRef, docId));
+  };
+
+  window.completeRepair = async (docId) => {
+    await deleteDoc(doc(repairsRef, docId));
+  };<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -382,9 +414,10 @@
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="window.switchTab('inventory')">📦 Inventaire</button>
-    <button class="tab-btn" onclick="window.switchTab('vehicles')">🚗 Véhicules</button>
-    <button class="tab-btn" onclick="window.switchTab('orders')">🛒 Commandes</button>
+    <button class="tab-btn active" onclick="switchTab('inventory')">📦 Inventaire</button>
+    <button class="tab-btn" onclick="switchTab('vehicles')">🚗 Véhicules</button>
+    <button class="tab-btn" onclick="switchTab('orders')">🛒 Commandes</button>
+    <button class="tab-btn" onclick="switchTab('repairs')">🔧 Réparations</button>
   </div>
 
   <!-- TAB: INVENTAIRE -->
@@ -443,6 +476,25 @@
   <div id="orders" class="tab-content">
     <div class="categories" id="ordersContainer"></div>
   </div>
+
+  <!-- TAB: RÉPARATIONS -->
+  <div id="repairs" class="tab-content">
+    <div class="form-section">
+      <div class="form-group">
+        <div class="input-group">
+          <label for="repairWeapon">Nom de l'arme</label>
+          <input id="repairWeapon" type="text" placeholder="Ex: AK47, M9, etc." />
+        </div>
+        <div class="input-group" style="flex: 0 1 120px;">
+          <label for="repairQty">Quantité</label>
+          <input id="repairQty" type="number" placeholder="0" min="0" />
+        </div>
+        <button onclick="addRepair()">Ajouter à la réparation</button>
+      </div>
+    </div>
+
+    <div class="categories" id="repairsContainer"></div>
+  </div>
 </div>
 
 <script type="module">
@@ -459,6 +511,7 @@
   const db = getFirestore(app);
   const stockRef = collection(db, "stock");
   const vehiclesRef = collection(db, "vehicles");
+  const repairsRef = collection(db, "repairs");
 
   const categories = {
     "Armes": { icon: "🔫", color: "#ef4444" },
@@ -474,7 +527,7 @@
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     
     document.getElementById(tabName).classList.add('active');
-    document.querySelector(`button[onclick="window.switchTab('${tabName}')"]`).classList.add('active');
+    document.querySelector(`button[onclick="switchTab('${tabName}')"]`).classList.add('active');
   };
 
   // INVENTAIRE
@@ -773,6 +826,82 @@
 
   document.getElementById('vehiclePlate').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') addVehicle();
+  });
+
+  // RENDU RÉPARATIONS
+  onSnapshot(repairsRef, (snapshot) => {
+    const container = document.getElementById('repairsContainer');
+    container.innerHTML = '';
+
+    if (snapshot.empty) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-message';
+      empty.style.gridColumn = '1 / -1';
+      empty.textContent = 'Aucune arme en réparation';
+      container.appendChild(empty);
+      return;
+    }
+
+    const categoryDiv = document.createElement('div');
+    categoryDiv.className = 'category';
+    
+    const header = document.createElement('div');
+    header.className = 'category-header';
+    header.innerHTML = `
+      <span class="category-icon">🔧</span>
+      <span>Armes en réparation</span>
+      <span class="category-count">${snapshot.size}</span>
+    `;
+    categoryDiv.appendChild(header);
+
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr>
+        <th>Arme</th>
+        <th style="text-align: right;">Quantité</th>
+        <th style="text-align: center;">Action</th>
+      </tr>
+    `;
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    const repairs = [];
+    
+    snapshot.forEach(docu => {
+      repairs.push({
+        id: docu.id,
+        ...docu.data()
+      });
+    });
+
+    // Trier par date décroissante (plus récent en haut)
+    repairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    repairs.forEach(repair => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${repair.weapon}</td>
+        <td style="text-align: right;"><span class="qty-badge">${Number(repair.qty).toLocaleString('fr-FR')}</span></td>
+        <td class="action-cell">
+          <button class="btn-update" onclick="completeRepair('${repair.id}')">✓ Réparé</button>
+          <button class="btn-danger" onclick="removeRepair('${repair.id}')">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    categoryDiv.appendChild(table);
+    container.appendChild(categoryDiv);
+  });
+
+  document.getElementById('repairWeapon').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addRepair();
+  });
+
+  document.getElementById('repairQty').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addRepair();
   });
 </script>
 </body>
