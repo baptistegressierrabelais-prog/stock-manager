@@ -5,352 +5,52 @@
   <title>Gestion de stock – Sunny Island</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
-      color: #e5e7eb;
-      padding: 20px;
-      min-height: 100vh;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    header {
-      margin-bottom: 40px;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 32px;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, #60a5fa, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 30px;
-      border-bottom: 2px solid #334155;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      padding: 12px 24px;
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s ease;
-      margin-bottom: -2px;
-    }
-
-    .tab-btn:hover {
-      color: #cbd5e1;
-    }
-
-    .tab-btn.active {
-      color: #60a5fa;
-      border-bottom-color: #60a5fa;
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .form-section {
-      background: #1e293b;
-      padding: 24px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      border: 1px solid #334155;
-    }
-
-    .form-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: flex-end;
-    }
-
-    .input-group {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      margin-bottom: 6px;
-      color: #cbd5e1;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px 12px;
-      background: #0f172a;
-      border: 1px solid #475569;
-      color: #e5e7eb;
-      border-radius: 6px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    button {
-      padding: 10px 24px;
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      font-size: 14px;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .btn-danger:hover {
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-    }
-
-    .categories {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-      gap: 24px;
-    }
-
-    .category {
-      background: #1e293b;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid #334155;
-      transition: all 0.3s ease;
-    }
-
-    .category:hover {
-      border-color: #475569;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-    }
-
-    .category-header {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      padding: 16px;
-      font-weight: 600;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .category-icon {
-      font-size: 20px;
-    }
-
-    .category-count {
-      margin-left: auto;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 12px 16px;
-      text-align: left;
-      border-bottom: 1px solid #334155;
-    }
-
-    th {
-      background: #0f172a;
-      font-weight: 600;
-      font-size: 12px;
-      text-transform: uppercase;
-      color: #94a3b8;
-      letter-spacing: 0.5px;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    td {
-      color: #cbd5e1;
-    }
-
-    .qty-badge {
-      display: inline-block;
-      background: #334155;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-weight: 600;
-      color: #60a5fa;
-    }
-
-    .empty-message {
-      padding: 24px;
-      text-align: center;
-      color: #64748b;
-      font-size: 14px;
-    }
-
-    .action-cell {
-      text-align: center;
-    }
-
-    .btn-update {
-      background: linear-gradient(135deg, #10b981, #059669);
-      padding: 4px 10px;
-      font-size: 11px;
-      margin-left: 6px;
-    }
-
-    .btn-update:hover {
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-    }
-
-    .vehicles-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-
-    .vehicle-card {
-      background: #1e293b;
-      border-radius: 12px;
-      padding: 0;
-      border: 1px solid #334155;
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-
-    .vehicle-card:hover {
-      border-color: #475569;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-    }
-
-    .vehicle-header {
-      display: flex;
-      align-items: stretch;
-      height: 60px;
-    }
-
-    .vehicle-number {
-      font-size: 16px;
-      font-weight: 700;
-      color: white;
-      background: #1e293b;
-      flex: 0 0 25%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-right: 1px solid #334155;
-    }
-
-    .vehicle-info {
-      flex: 0 0 35%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-right: 1px solid #334155;
-      background: #1e293b;
-    }
-
-    .vehicle-info h3 {
-      font-size: 14px;
-      margin: 0;
-      color: #e5e7eb;
-    }
-
-    .vehicle-plate {
-      background: #fbbf24;
-      color: #000;
-      flex: 0 0 40%;
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .vehicle-actions {
-      display: flex;
-      gap: 8px;
-      padding: 12px 16px;
-      background: #1e293b;
-    }
-
-    .vehicle-actions button {
-      flex: 1;
-      padding: 8px 12px;
-      font-size: 12px;
-    }
-
-    @media (max-width: 768px) {
-      .categories {
-        grid-template-columns: 1fr;
-      }
-
-      .form-group {
-        flex-direction: column;
-      }
-
-      .input-group {
-        min-width: 100%;
-      }
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%); color: #e5e7eb; padding: 20px; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { margin-bottom: 40px; text-align: center; }
+    h1 { font-size: 32px; background: linear-gradient(135deg, #60a5fa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 30px; border-bottom: 2px solid #334155; flex-wrap: wrap; }
+    .tab-btn { padding: 12px 24px; background: transparent; border: none; color: #94a3b8; cursor: pointer; font-weight: 600; font-size: 14px; border-bottom: 3px solid transparent; transition: all 0.3s ease; margin-bottom: -2px; }
+    .tab-btn:hover { color: #cbd5e1; }
+    .tab-btn.active { color: #60a5fa; border-bottom-color: #60a5fa; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .form-section { background: #1e293b; padding: 24px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #334155; }
+    .form-group { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+    .input-group { flex: 1; min-width: 200px; }
+    label { display: block; font-size: 12px; margin-bottom: 6px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; }
+    input, select { width: 100%; padding: 10px 12px; background: #0f172a; border: 1px solid #475569; color: #e5e7eb; border-radius: 6px; font-size: 14px; }
+    input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+    button { padding: 10px 24px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 14px; }
+    button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); padding: 6px 12px; font-size: 12px; }
+    .btn-update { background: linear-gradient(135deg, #10b981, #059669); padding: 4px 10px; font-size: 11px; margin-left: 6px; }
+    .categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 24px; }
+    .category { background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155; }
+    .category-header { background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 16px; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+    .category-icon { font-size: 20px; }
+    .category-count { margin-left: auto; background: rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #334155; }
+    th { background: #0f172a; font-weight: 600; font-size: 12px; text-transform: uppercase; color: #94a3b8; }
+    .qty-badge { display: inline-block; background: #334155; padding: 4px 10px; border-radius: 20px; font-weight: 600; color: #60a5fa; }
+    .empty-message { padding: 24px; text-align: center; color: #64748b; font-size: 14px; }
+    .action-cell { text-align: center; }
+    .vehicles-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .vehicle-card { background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155; }
+    .vehicle-header { display: flex; align-items: stretch; height: 60px; }
+    .vehicle-number { font-size: 16px; font-weight: 700; color: white; flex: 0 0 25%; display: flex; align-items: center; justify-content: center; border-right: 1px solid #334155; }
+    .vehicle-info { flex: 0 0 35%; display: flex; align-items: center; justify-content: center; border-right: 1px solid #334155; }
+    .vehicle-info h3 { font-size: 14px; margin: 0; color: #e5e7eb; }
+    .vehicle-plate { background: #fbbf24; color: #000; flex: 0 0 40%; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+    .vehicle-actions { display: flex; gap: 8px; padding: 12px 16px; background: #1e293b; }
+    .vehicle-actions button { flex: 1; padding: 8px 12px; font-size: 12px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>🏝️ Blaine County Sheriff Sunny Island - Gestion</h1>
-    </header>
-
+    <header><h1>🏝️ Blaine County Sheriff Sunny Island - Gestion</h1></header>
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('inventory')">📦 Inventaire</button>
       <button class="tab-btn" onclick="switchTab('vehicles')">🚗 Véhicules</button>
@@ -358,86 +58,46 @@
       <button class="tab-btn" onclick="switchTab('repairs')">🔧 Réparations</button>
     </div>
 
-    <!-- INVENTAIRE -->
     <div id="inventory" class="tab-content active">
       <div class="form-section">
         <div class="form-group">
-          <div class="input-group">
-            <label for="category">Catégorie</label>
-            <select id="category">
-              <option value="Armes">🔫 Armes</option>
-              <option value="Équipement Arme">🎯 Équipement Arme</option>
-              <option value="Munitions">💣 Munitions</option>
-              <option value="Équipement">🧥 Équipement</option>
-              <option value="Divers">📦 Divers</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="item">Nom de l'objet</label>
-            <input id="item" type="text" placeholder="Ex: AK47, 9mm, etc.">
-          </div>
-          <div class="input-group" style="flex: 0 1 120px;">
-            <label for="qty">Quantité</label>
-            <input id="qty" type="number" placeholder="0" min="0">
-          </div>
+          <div class="input-group"><label>Catégorie</label><select id="category"><option value="Armes">🔫 Armes</option><option value="Équipement Arme">🎯 Équipement Arme</option><option value="Munitions">💣 Munitions</option><option value="Équipement">🧥 Équipement</option><option value="Divers">📦 Divers</option></select></div>
+          <div class="input-group"><label>Nom de l'objet</label><input id="item" type="text" placeholder="Ex: AK47, 9mm, etc."></div>
+          <div class="input-group" style="flex: 0 1 120px;"><label>Quantité</label><input id="qty" type="number" placeholder="0" min="0"></div>
           <button onclick="addItem()">Ajouter / Mettre à jour</button>
         </div>
       </div>
       <div class="categories" id="categoriesContainer"></div>
     </div>
 
-    <!-- VÉHICULES -->
     <div id="vehicles" class="tab-content">
       <div class="form-section">
         <div class="form-group">
-          <div class="input-group" style="flex: 0 1 140px;">
-            <label for="vehicleNumber">Matricule (01-99)</label>
-            <input id="vehicleNumber" type="text" placeholder="01" maxlength="2">
-          </div>
-          <div class="input-group">
-            <label for="vehicleName">Nom du véhicule</label>
-            <input id="vehicleName" type="text" placeholder="Ex: Dispatch, Patrol, etc.">
-          </div>
-          <div class="input-group">
-            <label for="vehiclePlate">Plaque d'immatriculation</label>
-            <input id="vehiclePlate" type="text" placeholder="Ex: AA-123-BB">
-          </div>
+          <div class="input-group" style="flex: 0 1 140px;"><label>Matricule (01-99)</label><input id="vehicleNumber" type="text" placeholder="01" maxlength="2"></div>
+          <div class="input-group"><label>Nom du véhicule</label><input id="vehicleName" type="text" placeholder="Ex: Dispatch, Patrol, etc."></div>
+          <div class="input-group"><label>Plaque d'immatriculation</label><input id="vehiclePlate" type="text" placeholder="Ex: AA-123-BB"></div>
           <button onclick="addVehicle()">Ajouter / Mettre à jour</button>
         </div>
       </div>
       <div class="vehicles-grid" id="vehiclesContainer"></div>
     </div>
 
-    <!-- COMMANDES -->
     <div id="orders" class="tab-content">
       <div class="form-section">
         <div class="form-group">
-          <div class="input-group">
-            <label for="orderItem">Article à commander</label>
-            <input id="orderItem" type="text" placeholder="Ex: AK47, 9mm, Gilet pare-balles, etc.">
-          </div>
-          <div class="input-group" style="flex: 0 1 120px;">
-            <label for="orderQty">Quantité</label>
-            <input id="orderQty" type="number" placeholder="0" min="0">
-          </div>
+          <div class="input-group"><label>Article à commander</label><input id="orderItem" type="text" placeholder="Ex: AK47, 9mm, Gilet pare-balles, etc."></div>
+          <div class="input-group" style="flex: 0 1 120px;"><label>Quantité</label><input id="orderQty" type="number" placeholder="0" min="0"></div>
           <button onclick="addOrder()">Ajouter à la commande</button>
         </div>
       </div>
       <div class="categories" id="ordersContainer"></div>
     </div>
 
-    <!-- RÉPARATIONS -->
     <div id="repairs" class="tab-content">
       <div class="form-section">
         <div class="form-group">
-          <div class="input-group">
-            <label for="repairWeapon">Nom de l'arme</label>
-            <input id="repairWeapon" type="text" placeholder="Ex: AK47, M9, etc.">
-          </div>
-          <div class="input-group" style="flex: 0 1 120px;">
-            <label for="repairQty">Quantité</label>
-            <input id="repairQty" type="number" placeholder="0" min="0">
-          </div>
+          <div class="input-group"><label>Nom de l'arme</label><input id="repairWeapon" type="text" placeholder="Ex: AK47, M9, etc."></div>
+          <div class="input-group" style="flex: 0 1 120px;"><label>Quantité</label><input id="repairQty" type="number" placeholder="0" min="0"></div>
           <button onclick="addRepair()">Ajouter à la réparation</button>
         </div>
       </div>
@@ -449,27 +109,14 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     
-    const firebaseConfig = {
-      apiKey: "AIzaSyBWHyADypkFFxslXd_9b2EvJIdFUq62qjY",
-      authDomain: "bcssi-stock.firebaseapp.com",
-      projectId: "bcssi-stock",
-    };
-    
+    const firebaseConfig = { apiKey: "AIzaSyBWHyADypkFFxslXd_9b2EvJIdFUq62qjY", authDomain: "bcssi-stock.firebaseapp.com", projectId: "bcssi-stock" };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const stockRef = collection(db, "stock");
     const vehiclesRef = collection(db, "vehicles");
     const repairsRef = collection(db, "repairs");
     const ordersRef = collection(db, "orders");
-
-    const categories = {
-      "Armes": { icon: "🔫" },
-      "Équipement Arme": { icon: "🎯" },
-      "Munitions": { icon: "💣" },
-      "Équipement": { icon: "🧥" },
-      "Divers": { icon: "📦" }
-    };
-
+    const categories = { "Armes": { icon: "🔫" }, "Équipement Arme": { icon: "🎯" }, "Munitions": { icon: "💣" }, "Équipement": { icon: "🧥" }, "Divers": { icon: "📦" } };
     window.lowStockItems = {};
 
     window.switchTab = (tabName) => {
@@ -480,19 +127,16 @@
     };
 
     window.addItem = async () => {
-      const category = document.getElementById('category').value;
+      const cat = document.getElementById('category').value;
       const name = document.getElementById('item').value.trim();
       const qty = Number(document.getElementById('qty').value);
       if (!name || qty < 0) return;
-      await setDoc(doc(stockRef, category + '__' + name), { category, name, qty });
+      await setDoc(doc(stockRef, cat + '__' + name), { category: cat, name, qty });
       document.getElementById('item').value = '';
       document.getElementById('qty').value = '';
     };
 
-    window.removeItem = async (docId) => {
-      await deleteDoc(doc(stockRef, docId));
-    };
-
+    window.removeItem = async (docId) => await deleteDoc(doc(stockRef, docId));
     window.updateItem = async (docId, newQty) => {
       const qty = Number(newQty);
       if (qty < 0) return;
@@ -513,10 +157,7 @@
       document.getElementById('vehiclePlate').value = '';
     };
 
-    window.removeVehicle = async (docId) => {
-      await deleteDoc(doc(vehiclesRef, docId));
-    };
-
+    window.removeVehicle = async (docId) => await deleteDoc(doc(vehiclesRef, docId));
     window.editVehicle = (number, name, plate) => {
       document.getElementById('vehicleNumber').value = number;
       document.getElementById('vehicleName').value = name;
@@ -534,8 +175,11 @@
       document.getElementById('orderQty').value = '';
     };
 
-    window.removeOrder = async (docId) => {
-      await deleteDoc(doc(ordersRef, docId));
+    window.removeOrder = async (docId) => await deleteDoc(doc(ordersRef, docId));
+    window.incrementOrder = async (docId, qty) => await setDoc(doc(ordersRef, docId), { qty: qty + 1 }, { merge: true });
+    window.decrementOrder = async (docId, qty) => {
+      if (qty <= 1) await deleteDoc(doc(ordersRef, docId));
+      else await setDoc(doc(ordersRef, docId), { qty: qty - 1 }, { merge: true });
     };
 
     window.addRepair = async () => {
@@ -549,25 +193,25 @@
       document.getElementById('repairQty').value = '';
     };
 
-    window.removeRepair = async (docId) => {
-      await deleteDoc(doc(repairsRef, docId));
-    };
+    window.removeRepair = async (docId) => await deleteDoc(doc(repairsRef, docId));
+    window.completeRepair = async (docId) => await deleteDoc(doc(repairsRef, docId));
 
-    window.completeRepair = async (docId) => {
-      await deleteDoc(doc(repairsRef, docId));
-    };
+    function createBadge(txt) {
+      const span = document.createElement('span');
+      span.className = 'qty-badge';
+      span.textContent = txt;
+      return span;
+    }
 
     onSnapshot(stockRef, (snapshot) => {
       const data = {};
       window.lowStockItems = {};
       const thresholds = { "Armes": 10, "Équipement Arme": 20, "Munitions": 5000, "Équipement": 20, "Divers": 50 };
-
       snapshot.forEach(docu => {
         const item = docu.data();
         const cat = item.category || "Divers";
         if (!data[cat]) data[cat] = [];
         data[cat].push({ id: docu.id, ...item });
-
         const threshold = thresholds[cat] || 0;
         if (item.qty < threshold) {
           if (!window.lowStockItems[cat]) window.lowStockItems[cat] = [];
@@ -577,43 +221,78 @@
 
       const container = document.getElementById('categoriesContainer');
       container.innerHTML = '';
-
       Object.keys(categories).forEach(cat => {
-        const items = data[cat] || [];
-        const catInfo = categories[cat];
-        const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'category';
-        
-        const header = document.createElement('div');
-        header.className = 'category-header';
-        header.textContent = catInfo.icon + ' ' + cat + ' ' + items.length;
-        categoryDiv.appendChild(header);
-
+        const items = (data[cat] || []).sort((a, b) => a.qty - b.qty);
+        const div = document.createElement('div');
+        div.className = 'category';
+        const head = document.createElement('div');
+        head.className = 'category-header';
+        head.appendChild((() => { const s = document.createElement('span'); s.className = 'category-icon'; s.textContent = categories[cat].icon; return s; })());
+        head.appendChild((() => { const s = document.createElement('span'); s.textContent = cat; return s; })());
+        head.appendChild((() => { const s = document.createElement('span'); s.className = 'category-count'; s.textContent = items.length; return s; })());
+        div.appendChild(head);
         if (items.length === 0) {
           const empty = document.createElement('div');
           empty.className = 'empty-message';
           empty.textContent = 'Aucun objet';
-          categoryDiv.appendChild(empty);
+          div.appendChild(empty);
         } else {
           const table = document.createElement('table');
           const thead = document.createElement('thead');
-          const headerRow = document.createElement('tr');
-          headerRow.innerHTML = '<th>Objet</th><th style="text-align: right;">Quantité</th><th style="text-align: right;">Affichage</th><th style="text-align: center;">Action</th>';
-          thead.appendChild(headerRow);
+          const tr = document.createElement('tr');
+          ['Objet', 'Quantité', 'Affichage', 'Action'].forEach(txt => {
+            const th = document.createElement('th');
+            th.textContent = txt;
+            if (txt !== 'Objet') th.style.textAlign = txt === 'Action' ? 'center' : 'right';
+            tr.appendChild(th);
+          });
+          thead.appendChild(tr);
           table.appendChild(thead);
-
-          items.sort((a, b) => a.qty - b.qty);
           const tbody = document.createElement('tbody');
           items.forEach(item => {
             const tr = document.createElement('tr');
-            const qty = Number(item.qty).toLocaleString('fr-FR');
-            tr.innerHTML = '<td>' + item.name + '</td><td style="text-align: right;"><input type="number" id="qty-' + item.id + '" value="' + item.qty + '" min="0"></td><td style="text-align: right;"><span class="qty-badge">' + qty + '</span></td><td class="action-cell"><button class="btn-update" onclick="updateItem(\'' + item.id + '\', document.getElementById(\'qty-' + item.id + '\').value)">✓</button><button class="btn-danger" onclick="removeItem(\'' + item.id + '\')">✕</button></td>';
+            const td1 = document.createElement('td');
+            td1.textContent = item.name;
+            tr.appendChild(td1);
+            const td2 = document.createElement('td');
+            td2.style.textAlign = 'right';
+            const inp = document.createElement('input');
+            inp.type = 'number';
+            inp.id = 'qty-' + item.id;
+            inp.value = item.qty;
+            inp.min = 0;
+            inp.style.width = '80px';
+            inp.style.padding = '6px';
+            inp.style.background = '#0f172a';
+            inp.style.border = '1px solid #475569';
+            inp.style.color = '#e5e7eb';
+            inp.style.borderRadius = '4px';
+            inp.style.textAlign = 'center';
+            td2.appendChild(inp);
+            tr.appendChild(td2);
+            const td3 = document.createElement('td');
+            td3.style.textAlign = 'right';
+            td3.appendChild(createBadge(Number(item.qty).toLocaleString('fr-FR')));
+            tr.appendChild(td3);
+            const td4 = document.createElement('td');
+            td4.className = 'action-cell';
+            const btn1 = document.createElement('button');
+            btn1.className = 'btn-update';
+            btn1.textContent = '✓';
+            btn1.onclick = () => updateItem(item.id, document.getElementById('qty-' + item.id).value);
+            const btn2 = document.createElement('button');
+            btn2.className = 'btn-danger';
+            btn2.textContent = '✕';
+            btn2.onclick = () => removeItem(item.id);
+            td4.appendChild(btn1);
+            td4.appendChild(btn2);
+            tr.appendChild(td4);
             tbody.appendChild(tr);
           });
           table.appendChild(tbody);
-          categoryDiv.appendChild(table);
+          div.appendChild(table);
         }
-        container.appendChild(categoryDiv);
+        container.appendChild(div);
       });
     });
 
@@ -633,7 +312,35 @@
       vehicles.forEach(vehicle => {
         const card = document.createElement('div');
         card.className = 'vehicle-card';
-        card.innerHTML = '<div class="vehicle-header"><div class="vehicle-number">BC ' + vehicle.number + '</div><div class="vehicle-info"><h3>' + vehicle.name + '</h3></div><div class="vehicle-plate">' + vehicle.plate + '</div></div><div class="vehicle-actions"><button onclick="editVehicle(' + vehicle.number + ', \'' + vehicle.name + '\', \'' + vehicle.plate + '\')">✏️ Modifier</button><button class="btn-danger" onclick="removeVehicle(\'' + vehicle.id + '\')">✕ Supprimer</button></div>';
+        const header = document.createElement('div');
+        header.className = 'vehicle-header';
+        const num = document.createElement('div');
+        num.className = 'vehicle-number';
+        num.textContent = 'BC ' + vehicle.number;
+        const info = document.createElement('div');
+        info.className = 'vehicle-info';
+        const h3 = document.createElement('h3');
+        h3.textContent = vehicle.name;
+        info.appendChild(h3);
+        const plate = document.createElement('div');
+        plate.className = 'vehicle-plate';
+        plate.textContent = vehicle.plate;
+        header.appendChild(num);
+        header.appendChild(info);
+        header.appendChild(plate);
+        card.appendChild(header);
+        const actions = document.createElement('div');
+        actions.className = 'vehicle-actions';
+        const btn1 = document.createElement('button');
+        btn1.textContent = '✏️ Modifier';
+        btn1.onclick = () => editVehicle(vehicle.number, vehicle.name, vehicle.plate);
+        const btn2 = document.createElement('button');
+        btn2.className = 'btn-danger';
+        btn2.textContent = '✕ Supprimer';
+        btn2.onclick = () => removeVehicle(vehicle.id);
+        actions.appendChild(btn1);
+        actions.appendChild(btn2);
+        card.appendChild(actions);
         container.appendChild(card);
       });
     });
@@ -641,7 +348,6 @@
     onSnapshot(ordersRef, (snapshot) => {
       const container = document.getElementById('ordersContainer');
       container.innerHTML = '';
-
       if (snapshot.empty && !Object.values(window.lowStockItems).some(arr => arr.length > 0)) {
         const empty = document.createElement('div');
         empty.className = 'empty-message';
@@ -649,67 +355,143 @@
         container.appendChild(empty);
         return;
       }
-
       if (!snapshot.empty) {
-        const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'category';
-        const header = document.createElement('div');
-        header.className = 'category-header';
-        header.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
-        header.textContent = '📝 Commandes manuelles ' + snapshot.size;
-        categoryDiv.appendChild(header);
-
+        const div = document.createElement('div');
+        div.className = 'category';
+        const head = document.createElement('div');
+        head.className = 'category-header';
+        head.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
+        const icon = document.createElement('span');
+        icon.className = 'category-icon';
+        icon.textContent = '📝';
+        const title = document.createElement('span');
+        title.textContent = 'Commandes manuelles';
+        const count = document.createElement('span');
+        count.className = 'category-count';
+        count.textContent = snapshot.size;
+        head.appendChild(icon);
+        head.appendChild(title);
+        head.appendChild(count);
+        div.appendChild(head);
         const table = document.createElement('table');
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
-        headerRow.innerHTML = '<th>Article</th><th style="text-align: right;">Quantité</th><th style="text-align: center;">Action</th>';
+        ['Article', 'Quantité', 'Action'].forEach(txt => {
+          const th = document.createElement('th');
+          th.textContent = txt;
+          if (txt !== 'Article') th.style.textAlign = txt === 'Action' ? 'center' : 'right';
+          headerRow.appendChild(th);
+        });
         thead.appendChild(headerRow);
         table.appendChild(thead);
-
         const tbody = document.createElement('tbody');
         const orders = [];
         snapshot.forEach(docu => orders.push({ id: docu.id, ...docu.data() }));
         orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         orders.forEach(order => {
           const tr = document.createElement('tr');
-          const qty = Number(order.qty).toLocaleString('fr-FR');
-          tr.innerHTML = '<td>' + order.item + '</td><td style="text-align: right;"><span class="qty-badge">' + qty + '</span></td><td class="action-cell"><button class="btn-danger" onclick="removeOrder(\'' + order.id + '\')">✕</button></td>';
+          const td1 = document.createElement('td');
+          td1.textContent = order.item;
+          tr.appendChild(td1);
+          const td2 = document.createElement('td');
+          td2.style.textAlign = 'right';
+          td2.appendChild(createBadge(Number(order.qty).toLocaleString('fr-FR')));
+          const btnDec = document.createElement('button');
+          btnDec.className = 'btn-update';
+          btnDec.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          btnDec.style.marginRight = '4px';
+          btnDec.textContent = '−';
+          btnDec.onclick = () => decrementOrder(order.id, order.qty);
+          const btnInc = document.createElement('button');
+          btnInc.className = 'btn-update';
+          btnInc.style.marginLeft = '4px';
+          btnInc.textContent = '+';
+          btnInc.onclick = () => incrementOrder(order.id, order.qty);
+          td2.appendChild(btnDec);
+          td2.appendChild(btnInc);
+          tr.appendChild(td2);
+          const td3 = document.createElement('td');
+          td3.className = 'action-cell';
+          const btnDel = document.createElement('button');
+          btnDel.className = 'btn-danger';
+          btnDel.textContent = '✕';
+          btnDel.onclick = () => removeOrder(order.id);
+          td3.appendChild(btnDel);
+          tr.appendChild(td3);
           tbody.appendChild(tr);
         });
         table.appendChild(tbody);
-        categoryDiv.appendChild(table);
-        container.appendChild(categoryDiv);
+        div.appendChild(table);
+        container.appendChild(div);
       }
-
       Object.keys(categories).forEach(cat => {
         const items = window.lowStockItems[cat] || [];
         if (items.length === 0) return;
-        const catInfo = categories[cat];
-        const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'category';
-        const header = document.createElement('div');
-        header.className = 'category-header';
-        header.textContent = catInfo.icon + ' ' + cat + ' ' + items.length;
-        categoryDiv.appendChild(header);
-
+        const div = document.createElement('div');
+        div.className = 'category';
+        const head = document.createElement('div');
+        head.className = 'category-header';
+        const icon = document.createElement('span');
+        icon.className = 'category-icon';
+        icon.textContent = categories[cat].icon;
+        const title = document.createElement('span');
+        title.textContent = cat;
+        const count = document.createElement('span');
+        count.className = 'category-count';
+        count.textContent = items.length;
+        head.appendChild(icon);
+        head.appendChild(title);
+        head.appendChild(count);
+        div.appendChild(head);
         const table = document.createElement('table');
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
-        headerRow.innerHTML = '<th>Objet</th><th style="text-align: center;">Stock actuel</th><th style="text-align: center;">À commander</th>';
+        ['Objet', 'Stock actuel', 'À commander'].forEach(txt => {
+          const th = document.createElement('th');
+          th.textContent = txt;
+          th.style.textAlign = 'center';
+          headerRow.appendChild(th);
+        });
         thead.appendChild(headerRow);
         table.appendChild(thead);
-
         const tbody = document.createElement('tbody');
         items.forEach(item => {
           const tr = document.createElement('tr');
-          const qty = Number(item.qty).toLocaleString('fr-FR');
-          const needed = Number(item.neededQty).toLocaleString('fr-FR');
-          tr.innerHTML = '<td>' + item.name + '</td><td style="text-align: center;"><span class="qty-badge">' + qty + '</span></td><td style="text-align: center;"><span class="qty-badge" style="background: #dc2626; color: white;">+' + needed + '</span></td>';
+          const td1 = document.createElement('td');
+          td1.textContent = item.name;
+          tr.appendChild(td1);
+          const td2 = document.createElement('td');
+          td2.style.textAlign = 'center';
+          td2.appendChild(createBadge(Number(item.qty).toLocaleString('fr-FR')));
+          tr.appendChild(td2);
+          const td3 = document.createElement('td');
+          td3.style.textAlign = 'center';
+          const badge = createBadge('+' + Number(item.neededQty).toLocaleString('fr-FR'));
+          badge.style.background = '#dc2626';
+          badge.style.color = 'white';
+          td3.appendChild(badge);
+          const btnDec = document.createElement('button');
+          btnDec.className = 'btn-update';
+          btnDec.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          btnDec.style.marginRight = '4px';
+          btnDec.textContent = '−';
+          btnDec.onclick = () => {
+            const newQty = item.neededQty - 1;
+            if (newQty > 0) setDoc(doc(stockRef, item.id), { qty: item.qty + newQty }, { merge: true });
+          };
+          const btnInc = document.createElement('button');
+          btnInc.className = 'btn-update';
+          btnInc.style.marginLeft = '4px';
+          btnInc.textContent = '+';
+          btnInc.onclick = () => setDoc(doc(stockRef, item.id), { qty: item.qty + item.neededQty + 1 }, { merge: true });
+          td3.appendChild(btnDec);
+          td3.appendChild(btnInc);
+          tr.appendChild(td3);
           tbody.appendChild(tr);
         });
         table.appendChild(tbody);
-        categoryDiv.appendChild(table);
-        container.appendChild(categoryDiv);
+        div.appendChild(table);
+        container.appendChild(div);
       });
     });
 
@@ -723,70 +505,75 @@
         container.appendChild(empty);
         return;
       }
-      const categoryDiv = document.createElement('div');
-      categoryDiv.className = 'category';
-      const header = document.createElement('div');
-      header.className = 'category-header';
-      header.textContent = '🔧 Armes en réparation ' + snapshot.size;
-      categoryDiv.appendChild(header);
-
+      const div = document.createElement('div');
+      div.className = 'category';
+      const head = document.createElement('div');
+      head.className = 'category-header';
+      const icon = document.createElement('span');
+      icon.className = 'category-icon';
+      icon.textContent = '🔧';
+      const title = document.createElement('span');
+      title.textContent = 'Armes en réparation';
+      const count = document.createElement('span');
+      count.className = 'category-count';
+      count.textContent = snapshot.size;
+      head.appendChild(icon);
+      head.appendChild(title);
+      head.appendChild(count);
+      div.appendChild(head);
       const table = document.createElement('table');
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
-      headerRow.innerHTML = '<th>Arme</th><th style="text-align: right;">Quantité</th><th style="text-align: center;">Action</th>';
+      ['Arme', 'Quantité', 'Action'].forEach(txt => {
+        const th = document.createElement('th');
+        th.textContent = txt;
+        if (txt !== 'Arme') th.style.textAlign = txt === 'Action' ? 'center' : 'right';
+        headerRow.appendChild(th);
+      });
       thead.appendChild(headerRow);
       table.appendChild(thead);
-
       const tbody = document.createElement('tbody');
       const repairs = [];
       snapshot.forEach(docu => repairs.push({ id: docu.id, ...docu.data() }));
       repairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       repairs.forEach(repair => {
         const tr = document.createElement('tr');
-        const qty = Number(repair.qty).toLocaleString('fr-FR');
-        tr.innerHTML = '<td>' + repair.weapon + '</td><td style="text-align: right;"><span class="qty-badge">' + qty + '</span></td><td class="action-cell"><button class="btn-update" onclick="completeRepair(\'' + repair.id + '\')">✓ Réparé</button><button class="btn-danger" onclick="removeRepair(\'' + repair.id + '\')">✕</button></td>';
+        const td1 = document.createElement('td');
+        td1.textContent = repair.weapon;
+        tr.appendChild(td1);
+        const td2 = document.createElement('td');
+        td2.style.textAlign = 'right';
+        td2.appendChild(createBadge(Number(repair.qty).toLocaleString('fr-FR')));
+        tr.appendChild(td2);
+        const td3 = document.createElement('td');
+        td3.className = 'action-cell';
+        const btn1 = document.createElement('button');
+        btn1.className = 'btn-update';
+        btn1.textContent = '✓ Réparé';
+        btn1.onclick = () => completeRepair(repair.id);
+        const btn2 = document.createElement('button');
+        btn2.className = 'btn-danger';
+        btn2.textContent = '✕';
+        btn2.onclick = () => removeRepair(repair.id);
+        td3.appendChild(btn1);
+        td3.appendChild(btn2);
+        tr.appendChild(td3);
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
-      categoryDiv.appendChild(table);
-      container.appendChild(categoryDiv);
+      div.appendChild(table);
+      container.appendChild(div);
     });
 
-    document.getElementById('item').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addItem();
-    });
-
-    document.getElementById('qty').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addItem();
-    });
-
-    document.getElementById('vehicleNumber').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addVehicle();
-    });
-
-    document.getElementById('vehicleName').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addVehicle();
-    });
-
-    document.getElementById('vehiclePlate').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addVehicle();
-    });
-
-    document.getElementById('orderItem').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addOrder();
-    });
-
-    document.getElementById('orderQty').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addOrder();
-    });
-
-    document.getElementById('repairWeapon').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addRepair();
-    });
-
-    document.getElementById('repairQty').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addRepair();
-    });
+    document.getElementById('item').addEventListener('keypress', (e) => { if (e.key === 'Enter') addItem(); });
+    document.getElementById('qty').addEventListener('keypress', (e) => { if (e.key === 'Enter') addItem(); });
+    document.getElementById('vehicleNumber').addEventListener('keypress', (e) => { if (e.key === 'Enter') addVehicle(); });
+    document.getElementById('vehicleName').addEventListener('keypress', (e) => { if (e.key === 'Enter') addVehicle(); });
+    document.getElementById('vehiclePlate').addEventListener('keypress', (e) => { if (e.key === 'Enter') addVehicle(); });
+    document.getElementById('orderItem').addEventListener('keypress', (e) => { if (e.key === 'Enter') addOrder(); });
+    document.getElementById('orderQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') addOrder(); });
+    document.getElementById('repairWeapon').addEventListener('keypress', (e) => { if (e.key === 'Enter') addRepair(); });
+    document.getElementById('repairQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') addRepair(); });
   </script>
 </body>
 </html>
