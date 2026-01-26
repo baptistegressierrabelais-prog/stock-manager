@@ -1,36 +1,4 @@
-window.editVehicle = (number, name, plate) => {
-    document.getElementById('vehicleNumber').value = number;
-    document.getElementById('vehicleName').value = name;
-    document.getElementById('vehiclePlate').value = plate;
-    document.getElementById('vehicleNumber').focus();
-  };
-
-  // RÉPARATIONS
-  window.addRepair = async () => {
-    const weapon = document.getElementById('repairWeapon').value.trim();
-    const qty = Number(document.getElementById('repairQty').value);
-    
-    if (!weapon || qty < 0) return;
-    
-    const docId = `repair_${weapon}_${Date.now()}`;
-    await setDoc(doc(repairsRef, docId), {
-      weapon,
-      qty,
-      createdAt: new Date().toISOString()
-    });
-    
-    document.getElementById('repairWeapon').value = '';
-    document.getElementById('repairQty').value = '';
-    document.getElementById('repairWeapon').focus();
-  };
-
-  window.removeRepair = async (docId) => {
-    await deleteDoc(doc(repairsRef, docId));
-  };
-
-  window.completeRepair = async (docId) => {
-    await deleteDoc(doc(repairsRef, docId));
-  };<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -597,6 +565,36 @@ window.editVehicle = (number, name, plate) => {
     document.getElementById('vehicleNumber').focus();
   };
 
+  // RÉPARATIONS
+  window.addRepair = async () => {
+    const weapon = document.getElementById('repairWeapon').value.trim();
+    const qtyValue = document.getElementById('repairQty').value.trim();
+    
+    if (!weapon || !qtyValue) return;
+    
+    const qty = parseInt(qtyValue, 10);
+    if (isNaN(qty) || qty <= 0) return;
+    
+    const docId = `repair_${weapon}_${Date.now()}`;
+    await setDoc(doc(repairsRef, docId), {
+      weapon,
+      qty,
+      createdAt: new Date().toISOString()
+    });
+    
+    document.getElementById('repairWeapon').value = '';
+    document.getElementById('repairQty').value = '';
+    document.getElementById('repairWeapon').focus();
+  };
+
+  window.removeRepair = async (docId) => {
+    await deleteDoc(doc(repairsRef, docId));
+  };
+
+  window.completeRepair = async (docId) => {
+    await deleteDoc(doc(repairsRef, docId));
+  };
+
   // RENDU INVENTAIRE
   onSnapshot(stockRef, (snapshot) => {
     const data = {};
@@ -614,7 +612,6 @@ window.editVehicle = (number, name, plate) => {
         ...item
       });
 
-      // Vérifier les seuils de stock faible
       const thresholds = {
         "Armes": 10,
         "Équipement Arme": 20,
@@ -636,7 +633,6 @@ window.editVehicle = (number, name, plate) => {
       }
     });
 
-    // Rendu inventaire
     const container = document.getElementById('categoriesContainer');
     container.innerHTML = '';
 
@@ -674,7 +670,6 @@ window.editVehicle = (number, name, plate) => {
         `;
         table.appendChild(thead);
 
-        // Trier par quantité croissante
         items.sort((a, b) => a.qty - b.qty);
 
         const tbody = document.createElement('tbody');
@@ -698,7 +693,7 @@ window.editVehicle = (number, name, plate) => {
       container.appendChild(categoryDiv);
     });
 
-    // Rendu onglet commandes
+    // RENDU COMMANDES
     const ordersContainer = document.getElementById('ordersContainer');
     ordersContainer.innerHTML = '';
 
@@ -747,8 +742,8 @@ window.editVehicle = (number, name, plate) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${item.name}</td>
-          <td style="text-align: center;"><span class="qty-badge">${item.qty.toLocaleString('fr-FR')}</span></td>
-          <td style="text-align: center;"><span class="qty-badge" style="background: #dc2626; color: white;">+${item.neededQty.toLocaleString('fr-FR')}</span></td>
+          <td style="text-align: center;"><span class="qty-badge">${Number(item.qty).toLocaleString('fr-FR')}</span></td>
+          <td style="text-align: center;"><span class="qty-badge" style="background: #dc2626; color: white;">+${Number(item.neededQty).toLocaleString('fr-FR')}</span></td>
         `;
         tbody.appendChild(tr);
       });
@@ -767,8 +762,8 @@ window.editVehicle = (number, name, plate) => {
     if (snapshot.empty) {
       const empty = document.createElement('div');
       empty.className = 'empty-message';
-      empty.textContent = 'Aucun véhicule ajouté';
       empty.style.gridColumn = '1 / -1';
+      empty.textContent = 'Aucun véhicule ajouté';
       container.appendChild(empty);
       return;
     }
@@ -805,27 +800,6 @@ window.editVehicle = (number, name, plate) => {
       `;
       container.appendChild(card);
     });
-  });
-
-  // ENTRÉES AU CLAVIER
-  document.getElementById('item').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addItem();
-  });
-
-  document.getElementById('qty').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addItem();
-  });
-
-  document.getElementById('vehicleNumber').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addVehicle();
-  });
-
-  document.getElementById('vehicleName').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addVehicle();
-  });
-
-  document.getElementById('vehiclePlate').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addVehicle();
   });
 
   // RENDU RÉPARATIONS
@@ -875,7 +849,6 @@ window.editVehicle = (number, name, plate) => {
       });
     });
 
-    // Trier par date décroissante (plus récent en haut)
     repairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     repairs.forEach(repair => {
@@ -896,13 +869,14 @@ window.editVehicle = (number, name, plate) => {
     container.appendChild(categoryDiv);
   });
 
-  document.getElementById('repairWeapon').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addRepair();
+  // ENTRÉES AU CLAVIER
+  document.getElementById('item').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addItem();
   });
 
-  document.getElementById('repairQty').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addRepair();
+  document.getElementById('qty').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addItem();
   });
-</script>
-</body>
-</html>
+
+  document.getElementById('vehicleNumber').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addVehicle();
