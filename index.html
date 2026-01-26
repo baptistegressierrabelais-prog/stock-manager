@@ -168,12 +168,25 @@
       if (!firstName || !lastName || !jobTitle) return;
       
       const userId = firstName.toLowerCase() + lastName.toLowerCase();
-      const isAdmin = (firstName.toLowerCase() === "claude") || (firstName.toLowerCase() === "larry" && lastName.toLowerCase() === "warner");
-      const permissions = isAdmin ? { inventory: true, vehicles: true, orders: true, repairs: true, admin: true } : { ...defaultPermissions };
+      const userDocRef = doc(usersRef, userId);
+      const userDoc = await getDoc(userDocRef);
+
+      let permissions, isAdmin, assignedRole;
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        permissions = userData.permissions;
+        isAdmin = userData.isAdmin;
+        assignedRole = userData.assignedRole || null;
+      } else {
+        isAdmin = (firstName.toLowerCase() === "claude") || (firstName.toLowerCase() === "larry" && lastName.toLowerCase() === "warner");
+        permissions = isAdmin ? { inventory: true, vehicles: true, orders: true, repairs: true, admin: true } : { ...defaultPermissions };
+        assignedRole = null;
+      }
       
-      await setDoc(doc(usersRef, userId), { firstName, lastName, jobTitle, userId, permissions, isAdmin, createdAt: new Date().toISOString() });
+      await setDoc(userDocRef, { firstName, lastName, jobTitle, userId, permissions, isAdmin, assignedRole, createdAt: new Date().toISOString() }, { merge: true });
       
-      window.currentUser = { userId, firstName, lastName, jobTitle, permissions, isAdmin };
+      window.currentUser = { userId, firstName, lastName, jobTitle, permissions, isAdmin, assignedRole };
       document.getElementById('loginModal').classList.remove('active');
       document.getElementById('mainApp').style.display = 'block';
       setupTabs();
@@ -309,7 +322,7 @@
               onSnapshot(doc(rolesRef, select.value), (roleDoc) => {
                 if (roleDoc.exists()) {
                   const role = roleDoc.data();
-                  setDoc(doc(usersRef, docu.id), { permissions: role.permissions }, { merge: true });
+                  setDoc(doc(usersRef, docu.id), { permissions: role.permissions, assignedRole: select.value }, { merge: true });
                 }
               });
             }
