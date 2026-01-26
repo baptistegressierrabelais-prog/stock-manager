@@ -133,12 +133,17 @@
         </div>
       </div>
       <div id="rolesContainer"></div>
+
+      <div class="form-section" style="margin-top: 40px;">
+        <h2 style="color: #60a5fa; margin-bottom: 20px;">Gestion des utilisateurs</h2>
+        <div id="usersContainer"></div>
+      </div>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     
     const firebaseConfig = { apiKey: "AIzaSyBWHyADypkFFxslXd_9b2EvJIdFUq62qjY", authDomain: "bcssi-stock.firebaseapp.com", projectId: "bcssi-stock" };
     const app = initializeApp(firebaseConfig);
@@ -247,6 +252,77 @@
           delBtn.className = 'btn-danger';
           delBtn.textContent = 'Supprimer rôle';
           delBtn.onclick = () => deleteDoc(doc(rolesRef, docu.id));
+          div.appendChild(delBtn);
+          container.appendChild(div);
+        });
+      });
+
+      onSnapshot(usersRef, (snapshot) => {
+        const container = document.getElementById('usersContainer');
+        container.innerHTML = '';
+        snapshot.forEach(docu => {
+          const user = docu.data();
+          const div = document.createElement('div');
+          div.className = 'role-item';
+          const h3 = document.createElement('h3');
+          h3.textContent = user.firstName + ' ' + user.lastName;
+          const jobP = document.createElement('p');
+          jobP.textContent = user.jobTitle;
+          jobP.style.fontSize = '12px';
+          jobP.style.color = '#94a3b8';
+          jobP.style.marginBottom = '10px';
+          div.appendChild(h3);
+          div.appendChild(jobP);
+
+          const roleDiv = document.createElement('div');
+          roleDiv.style.marginBottom = '10px';
+          const label = document.createElement('label');
+          label.style.display = 'block';
+          label.style.marginBottom = '8px';
+          label.style.fontSize = '12px';
+          label.textContent = 'Attribuer un rôle:';
+          const select = document.createElement('select');
+          select.style.width = '100%';
+          select.style.padding = '8px';
+          select.style.background = '#0f172a';
+          select.style.border = '1px solid #475569';
+          select.style.color = '#e5e7eb';
+          select.style.borderRadius = '6px';
+          select.style.marginBottom = '10px';
+
+          const option0 = document.createElement('option');
+          option0.value = 'none';
+          option0.textContent = 'Aucun rôle';
+          select.appendChild(option0);
+
+          onSnapshot(rolesRef, (roleSnapshot) => {
+            roleSnapshot.forEach(roleDoc => {
+              const option = document.createElement('option');
+              option.value = roleDoc.id;
+              option.textContent = roleDoc.data().name;
+              select.appendChild(option);
+            });
+          });
+
+          select.onchange = () => {
+            if (select.value !== 'none') {
+              onSnapshot(doc(rolesRef, select.value), (roleDoc) => {
+                if (roleDoc.exists()) {
+                  const role = roleDoc.data();
+                  setDoc(doc(usersRef, docu.id), { permissions: role.permissions }, { merge: true });
+                }
+              });
+            }
+          };
+
+          roleDiv.appendChild(label);
+          roleDiv.appendChild(select);
+          div.appendChild(roleDiv);
+
+          const delBtn = document.createElement('button');
+          delBtn.className = 'btn-danger';
+          delBtn.textContent = 'Supprimer utilisateur';
+          delBtn.onclick = () => deleteDoc(doc(usersRef, docu.id));
           div.appendChild(delBtn);
           container.appendChild(div);
         });
