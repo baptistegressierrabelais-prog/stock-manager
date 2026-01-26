@@ -204,7 +204,8 @@
         { id: 'admin', label: '⚙️ Admin', permission: 'admin' }
       ];
       tabs.forEach(tab => {
-        if (window.currentUser.permissions[tab.permission]) {
+        const hasPermission = window.currentUser.isAdmin || window.currentUser.permissions[tab.permission];
+        if (hasPermission) {
           const btn = document.createElement('button');
           btn.className = 'tab-btn' + (tab.id === 'inventory' ? ' active' : '');
           btn.textContent = tab.label;
