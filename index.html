@@ -196,6 +196,17 @@
     function setupTabs() {
       const container = document.getElementById('tabsContainer');
       container.innerHTML = '';
+      
+      if (!window.currentUser.isAdmin && !window.currentUser.assignedRole) {
+        const noAccess = document.createElement('div');
+        noAccess.style.padding = '20px';
+        noAccess.style.textAlign = 'center';
+        noAccess.style.color = '#ef4444';
+        noAccess.textContent = 'Vous n\'avez pas accès à l\'application. Veuillez contacter un administrateur.';
+        container.appendChild(noAccess);
+        return;
+      }
+
       const tabs = [
         { id: 'inventory', label: '📦 Inventaire', permission: 'inventory' },
         { id: 'vehicles', label: '🚗 Véhicules', permission: 'vehicles' },
