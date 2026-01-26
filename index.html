@@ -206,7 +206,7 @@
     onSnapshot(stockRef, (snapshot) => {
       const data = {};
       window.lowStockItems = {};
-      const thresholds = { "Armes": 10, "Équipement Arme": 20, "Munitions": 5000, "Équipement": 20, "Divers": 50 };
+      const thresholds = { "Armes": 5, "Équipement Arme": 20, "Munitions": 5000, "Équipement": 5, "Divers": 50 };
       snapshot.forEach(docu => {
         const item = docu.data();
         const cat = item.category || "Divers";
@@ -475,15 +475,12 @@
           btnDec.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
           btnDec.style.marginRight = '4px';
           btnDec.textContent = '−';
-          btnDec.onclick = () => {
-            const newQty = item.neededQty - 1;
-            if (newQty > 0) setDoc(doc(stockRef, item.id), { qty: item.qty + newQty }, { merge: true });
-          };
+          btnDec.onclick = () => decrementStockOrder(item.id, item.neededQty);
           const btnInc = document.createElement('button');
           btnInc.className = 'btn-update';
           btnInc.style.marginLeft = '4px';
           btnInc.textContent = '+';
-          btnInc.onclick = () => setDoc(doc(stockRef, item.id), { qty: item.qty + item.neededQty + 1 }, { merge: true });
+          btnInc.onclick = () => incrementStockOrder(item.id, item.neededQty);
           td3.appendChild(btnDec);
           td3.appendChild(btnInc);
           tr.appendChild(td3);
