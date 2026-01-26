@@ -288,6 +288,17 @@
           div.appendChild(h3);
           div.appendChild(jobP);
 
+          const currentRoleP = document.createElement('p');
+          currentRoleP.style.fontSize = '12px';
+          currentRoleP.style.color = '#60a5fa';
+          currentRoleP.style.marginBottom = '15px';
+          currentRoleP.textContent = 'Rôle actuel: ' + (user.assignedRole ? user.assignedRole : 'Aucun');
+          if (user.isAdmin) {
+            currentRoleP.textContent = 'Rôle actuel: ADMIN';
+            currentRoleP.style.color = '#f59e0b';
+          }
+          div.appendChild(currentRoleP);
+
           const roleDiv = document.createElement('div');
           roleDiv.style.marginBottom = '10px';
           const label = document.createElement('label');
@@ -314,6 +325,9 @@
               const option = document.createElement('option');
               option.value = roleDoc.id;
               option.textContent = roleDoc.data().name;
+              if (user.assignedRole === roleDoc.id) {
+                option.selected = true;
+              }
               select.appendChild(option);
             });
           });
@@ -326,6 +340,8 @@
                   setDoc(doc(usersRef, docu.id), { permissions: role.permissions, assignedRole: select.value }, { merge: true });
                 }
               });
+            } else {
+              setDoc(doc(usersRef, docu.id), { permissions: { ...defaultPermissions }, assignedRole: null }, { merge: true });
             }
           };
 
