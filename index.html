@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Gestion de stock – Sunny Island</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
@@ -34,16 +38,12 @@
       background-clip: text;
     }
 
-    .subtitle {
-      color: #94a3b8;
-      font-size: 14px;
-    }
-
     .tabs {
       display: flex;
       gap: 8px;
       margin-bottom: 30px;
       border-bottom: 2px solid #334155;
+      flex-wrap: wrap;
     }
 
     .tab-btn {
@@ -242,21 +242,6 @@
       text-align: center;
     }
 
-    .qty-input-cell input {
-      width: 80px;
-      padding: 6px;
-      background: #0f172a;
-      border: 1px solid #475569;
-      color: #e5e7eb;
-      border-radius: 4px;
-      text-align: center;
-    }
-
-    .qty-input-cell input:focus {
-      outline: none;
-      border-color: #3b82f6;
-    }
-
     .btn-update {
       background: linear-gradient(135deg, #10b981, #059669);
       padding: 4px 10px;
@@ -291,11 +276,6 @@
     .vehicle-header {
       display: flex;
       align-items: stretch;
-      gap: 0;
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: none;
-      width: 100%;
       height: 60px;
     }
 
@@ -335,8 +315,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0;
-      padding: 0;
     }
 
     .vehicle-actions {
@@ -364,539 +342,451 @@
       .input-group {
         min-width: 100%;
       }
-
-      .vehicles-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .tabs {
-        flex-wrap: wrap;
-      }
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>🏝️ Blaine County Sheriff Sunny Island - Gestion</h1>
-  </header>
+  <div class="container">
+    <header>
+      <h1>🏝️ Blaine County Sheriff Sunny Island - Gestion</h1>
+    </header>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('inventory')">📦 Inventaire</button>
-    <button class="tab-btn" onclick="switchTab('vehicles')">🚗 Véhicules</button>
-    <button class="tab-btn" onclick="switchTab('orders')">🛒 Commandes</button>
-    <button class="tab-btn" onclick="switchTab('repairs')">🔧 Réparations</button>
-  </div>
-
-  <!-- TAB: INVENTAIRE -->
-  <div id="inventory" class="tab-content active">
-    <div class="form-section">
-      <div class="form-group">
-        <div class="input-group">
-          <label for="category">Catégorie</label>
-          <select id="category">
-            <option value="Armes">🔫 Armes</option>
-            <option value="Équipement Arme">🎯 Équipement Arme</option>
-            <option value="Munitions">💣 Munitions</option>
-            <option value="Équipement">🧥 Équipement</option>
-            <option value="Divers">📦 Divers</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="item">Nom de l'objet</label>
-          <input id="item" type="text" placeholder="Ex: AK47, 9mm, etc." />
-        </div>
-        <div class="input-group" style="flex: 0 1 120px;">
-          <label for="qty">Quantité</label>
-          <input id="qty" type="number" placeholder="0" min="0" />
-        </div>
-        <button onclick="addItem()">Ajouter / Mettre à jour</button>
-      </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('inventory')">📦 Inventaire</button>
+      <button class="tab-btn" onclick="switchTab('vehicles')">🚗 Véhicules</button>
+      <button class="tab-btn" onclick="switchTab('orders')">🛒 Commandes</button>
+      <button class="tab-btn" onclick="switchTab('repairs')">🔧 Réparations</button>
     </div>
 
-    <div class="categories" id="categoriesContainer"></div>
-  </div>
-
-  <!-- TAB: VÉHICULES -->
-  <div id="vehicles" class="tab-content">
-    <div class="form-section">
-      <div class="form-group">
-        <div class="input-group" style="flex: 0 1 140px;">
-          <label for="vehicleNumber">Matricule (01-99)</label>
-          <input id="vehicleNumber" type="text" placeholder="01" maxlength="2" pattern="\d{2}" />
+    <!-- INVENTAIRE -->
+    <div id="inventory" class="tab-content active">
+      <div class="form-section">
+        <div class="form-group">
+          <div class="input-group">
+            <label for="category">Catégorie</label>
+            <select id="category">
+              <option value="Armes">🔫 Armes</option>
+              <option value="Équipement Arme">🎯 Équipement Arme</option>
+              <option value="Munitions">💣 Munitions</option>
+              <option value="Équipement">🧥 Équipement</option>
+              <option value="Divers">📦 Divers</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="item">Nom de l'objet</label>
+            <input id="item" type="text" placeholder="Ex: AK47, 9mm, etc.">
+          </div>
+          <div class="input-group" style="flex: 0 1 120px;">
+            <label for="qty">Quantité</label>
+            <input id="qty" type="number" placeholder="0" min="0">
+          </div>
+          <button onclick="addItem()">Ajouter / Mettre à jour</button>
         </div>
-        <div class="input-group">
-          <label for="vehicleName">Nom du véhicule</label>
-          <input id="vehicleName" type="text" placeholder="Ex: Dispatch, Patrol, etc." />
-        </div>
-        <div class="input-group">
-          <label for="vehiclePlate">Plaque d'immatriculation</label>
-          <input id="vehiclePlate" type="text" placeholder="Ex: AA-123-BB" />
-        </div>
-        <button onclick="addVehicle()">Ajouter / Mettre à jour</button>
       </div>
+      <div class="categories" id="categoriesContainer"></div>
     </div>
 
-    <div class="vehicles-grid" id="vehiclesContainer"></div>
-  </div>
-
-  <!-- TAB: COMMANDES -->
-  <div id="orders" class="tab-content">
-    <div class="categories" id="ordersContainer"></div>
-  </div>
-
-  <!-- TAB: RÉPARATIONS -->
-  <div id="repairs" class="tab-content">
-    <div class="form-section">
-      <div class="form-group">
-        <div class="input-group">
-          <label for="repairWeapon">Nom de l'arme</label>
-          <input id="repairWeapon" type="text" placeholder="Ex: AK47, M9, etc." />
+    <!-- VÉHICULES -->
+    <div id="vehicles" class="tab-content">
+      <div class="form-section">
+        <div class="form-group">
+          <div class="input-group" style="flex: 0 1 140px;">
+            <label for="vehicleNumber">Matricule (01-99)</label>
+            <input id="vehicleNumber" type="text" placeholder="01" maxlength="2">
+          </div>
+          <div class="input-group">
+            <label for="vehicleName">Nom du véhicule</label>
+            <input id="vehicleName" type="text" placeholder="Ex: Dispatch, Patrol, etc.">
+          </div>
+          <div class="input-group">
+            <label for="vehiclePlate">Plaque d'immatriculation</label>
+            <input id="vehiclePlate" type="text" placeholder="Ex: AA-123-BB">
+          </div>
+          <button onclick="addVehicle()">Ajouter / Mettre à jour</button>
         </div>
-        <div class="input-group" style="flex: 0 1 120px;">
-          <label for="repairQty">Quantité</label>
-          <input id="repairQty" type="number" placeholder="0" min="0" />
-        </div>
-        <button onclick="addRepair()">Ajouter à la réparation</button>
       </div>
+      <div class="vehicles-grid" id="vehiclesContainer"></div>
     </div>
 
-    <div class="categories" id="repairsContainer"></div>
+    <!-- COMMANDES -->
+    <div id="orders" class="tab-content">
+      <div class="form-section">
+        <div class="form-group">
+          <div class="input-group">
+            <label for="orderItem">Article à commander</label>
+            <input id="orderItem" type="text" placeholder="Ex: AK47, 9mm, Gilet pare-balles, etc.">
+          </div>
+          <div class="input-group" style="flex: 0 1 120px;">
+            <label for="orderQty">Quantité</label>
+            <input id="orderQty" type="number" placeholder="0" min="0">
+          </div>
+          <button onclick="addOrder()">Ajouter à la commande</button>
+        </div>
+      </div>
+      <div class="categories" id="ordersContainer"></div>
+    </div>
+
+    <!-- RÉPARATIONS -->
+    <div id="repairs" class="tab-content">
+      <div class="form-section">
+        <div class="form-group">
+          <div class="input-group">
+            <label for="repairWeapon">Nom de l'arme</label>
+            <input id="repairWeapon" type="text" placeholder="Ex: AK47, M9, etc.">
+          </div>
+          <div class="input-group" style="flex: 0 1 120px;">
+            <label for="repairQty">Quantité</label>
+            <input id="repairQty" type="number" placeholder="0" min="0">
+          </div>
+          <button onclick="addRepair()">Ajouter à la réparation</button>
+        </div>
+      </div>
+      <div class="categories" id="repairsContainer"></div>
+    </div>
   </div>
-</div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-  
-  const firebaseConfig = {
-    apiKey: "AIzaSyBWHyADypkFFxslXd_9b2EvJIdFUq62qjY",
-    authDomain: "bcssi-stock.firebaseapp.com",
-    projectId: "bcssi-stock",
-  };
-  
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const stockRef = collection(db, "stock");
-  const vehiclesRef = collection(db, "vehicles");
-  const repairsRef = collection(db, "repairs");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBWHyADypkFFxslXd_9b2EvJIdFUq62qjY",
+      authDomain: "bcssi-stock.firebaseapp.com",
+      projectId: "bcssi-stock",
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const stockRef = collection(db, "stock");
+    const vehiclesRef = collection(db, "vehicles");
+    const repairsRef = collection(db, "repairs");
+    const ordersRef = collection(db, "orders");
 
-  const categories = {
-    "Armes": { icon: "🔫", color: "#ef4444" },
-    "Équipement Arme": { icon: "🎯", color: "#f59e0b" },
-    "Munitions": { icon: "💣", color: "#f97316" },
-    "Équipement": { icon: "🧥", color: "#06b6d4" },
-    "Divers": { icon: "📦", color: "#8b5cf6" }
-  };
+    const categories = {
+      "Armes": { icon: "🔫" },
+      "Équipement Arme": { icon: "🎯" },
+      "Munitions": { icon: "💣" },
+      "Équipement": { icon: "🧥" },
+      "Divers": { icon: "📦" }
+    };
 
-  // ONGLETS
-  window.switchTab = (tabName) => {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    
-    document.getElementById(tabName).classList.add('active');
-    document.querySelector(`button[onclick="switchTab('${tabName}')"]`).classList.add('active');
-  };
+    window.lowStockItems = {};
 
-  // INVENTAIRE
-  window.addItem = async () => {
-    const category = document.getElementById('category').value;
-    const name = document.getElementById('item').value.trim();
-    const qty = Number(document.getElementById('qty').value);
-    
-    if (!name || qty < 0) return;
-    
-    const docId = `${category}__${name}`;
-    await setDoc(doc(stockRef, docId), { 
-      category,
-      name,
-      qty 
-    });
-    
-    document.getElementById('item').value = '';
-    document.getElementById('qty').value = '';
-    document.getElementById('item').focus();
-  };
+    window.switchTab = (tabName) => {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    };
 
-  window.removeItem = async (docId) => {
-    await deleteDoc(doc(stockRef, docId));
-  };
+    window.addItem = async () => {
+      const category = document.getElementById('category').value;
+      const name = document.getElementById('item').value.trim();
+      const qty = Number(document.getElementById('qty').value);
+      if (!name || qty < 0) return;
+      await setDoc(doc(stockRef, category + '__' + name), { category, name, qty });
+      document.getElementById('item').value = '';
+      document.getElementById('qty').value = '';
+    };
 
-  window.updateItem = async (docId, newQty) => {
-    const qty = Number(newQty);
-    if (qty < 0) return;
-    
-    const docRef = doc(stockRef, docId);
-    await setDoc(docRef, { qty }, { merge: true });
-  };
+    window.removeItem = async (docId) => {
+      await deleteDoc(doc(stockRef, docId));
+    };
 
-  // VÉHICULES
-  window.addVehicle = async () => {
-    const numberStr = document.getElementById('vehicleNumber').value.trim();
-    const name = document.getElementById('vehicleName').value.trim();
-    const plate = document.getElementById('vehiclePlate').value.trim();
-    
-    if (!numberStr || numberStr.length !== 2 || !name || !plate) return;
-    
-    const number = parseInt(numberStr, 10);
-    if (isNaN(number) || number < 1 || number > 99) return;
-    
-    const docId = `vehicle_${String(number).padStart(2, '0')}`;
-    await setDoc(doc(vehiclesRef, docId), {
-      number: String(number).padStart(2, '0'),
-      name,
-      plate
-    });
-    
-    document.getElementById('vehicleNumber').value = '';
-    document.getElementById('vehicleName').value = '';
-    document.getElementById('vehiclePlate').value = '';
-    document.getElementById('vehicleNumber').focus();
-  };
+    window.updateItem = async (docId, newQty) => {
+      const qty = Number(newQty);
+      if (qty < 0) return;
+      await setDoc(doc(stockRef, docId), { qty }, { merge: true });
+    };
 
-  window.removeVehicle = async (docId) => {
-    await deleteDoc(doc(vehiclesRef, docId));
-  };
+    window.addVehicle = async () => {
+      const numberStr = document.getElementById('vehicleNumber').value.trim();
+      const name = document.getElementById('vehicleName').value.trim();
+      const plate = document.getElementById('vehiclePlate').value.trim();
+      if (!numberStr || numberStr.length !== 2 || !name || !plate) return;
+      const number = parseInt(numberStr, 10);
+      if (isNaN(number) || number < 1 || number > 99) return;
+      const num = String(number).padStart(2, '0');
+      await setDoc(doc(vehiclesRef, 'vehicle_' + num), { number: num, name, plate });
+      document.getElementById('vehicleNumber').value = '';
+      document.getElementById('vehicleName').value = '';
+      document.getElementById('vehiclePlate').value = '';
+    };
 
-  window.editVehicle = (number, name, plate) => {
-    document.getElementById('vehicleNumber').value = number;
-    document.getElementById('vehicleName').value = name;
-    document.getElementById('vehiclePlate').value = plate;
-    document.getElementById('vehicleNumber').focus();
-  };
+    window.removeVehicle = async (docId) => {
+      await deleteDoc(doc(vehiclesRef, docId));
+    };
 
-  // RÉPARATIONS
-  window.addRepair = async () => {
-    const weapon = document.getElementById('repairWeapon').value.trim();
-    const qtyValue = document.getElementById('repairQty').value.trim();
-    
-    if (!weapon || !qtyValue) return;
-    
-    const qty = parseInt(qtyValue, 10);
-    if (isNaN(qty) || qty <= 0) return;
-    
-    const docId = `repair_${weapon}_${Date.now()}`;
-    await setDoc(doc(repairsRef, docId), {
-      weapon,
-      qty,
-      createdAt: new Date().toISOString()
-    });
-    
-    document.getElementById('repairWeapon').value = '';
-    document.getElementById('repairQty').value = '';
-    document.getElementById('repairWeapon').focus();
-  };
+    window.editVehicle = (number, name, plate) => {
+      document.getElementById('vehicleNumber').value = number;
+      document.getElementById('vehicleName').value = name;
+      document.getElementById('vehiclePlate').value = plate;
+    };
 
-  window.removeRepair = async (docId) => {
-    await deleteDoc(doc(repairsRef, docId));
-  };
+    window.addOrder = async () => {
+      const item = document.getElementById('orderItem').value.trim();
+      const qtyValue = document.getElementById('orderQty').value.trim();
+      if (!item || !qtyValue) return;
+      const qty = parseInt(qtyValue, 10);
+      if (isNaN(qty) || qty <= 0) return;
+      await setDoc(doc(ordersRef, 'order_' + item + '_' + Date.now()), { item, qty, createdAt: new Date().toISOString() });
+      document.getElementById('orderItem').value = '';
+      document.getElementById('orderQty').value = '';
+    };
 
-  window.completeRepair = async (docId) => {
-    await deleteDoc(doc(repairsRef, docId));
-  };
+    window.removeOrder = async (docId) => {
+      await deleteDoc(doc(ordersRef, docId));
+    };
 
-  // RENDU INVENTAIRE
-  onSnapshot(stockRef, (snapshot) => {
-    const data = {};
-    const lowStockItems = {};
-    
-    snapshot.forEach(docu => {
-      const item = docu.data();
-      const category = item.category || "Divers";
-      
-      if (!data[category]) {
-        data[category] = [];
-      }
-      data[category].push({
-        id: docu.id,
-        ...item
+    window.addRepair = async () => {
+      const weapon = document.getElementById('repairWeapon').value.trim();
+      const qtyValue = document.getElementById('repairQty').value.trim();
+      if (!weapon || !qtyValue) return;
+      const qty = parseInt(qtyValue, 10);
+      if (isNaN(qty) || qty <= 0) return;
+      await setDoc(doc(repairsRef, 'repair_' + weapon + '_' + Date.now()), { weapon, qty, createdAt: new Date().toISOString() });
+      document.getElementById('repairWeapon').value = '';
+      document.getElementById('repairQty').value = '';
+    };
+
+    window.removeRepair = async (docId) => {
+      await deleteDoc(doc(repairsRef, docId));
+    };
+
+    window.completeRepair = async (docId) => {
+      await deleteDoc(doc(repairsRef, docId));
+    };
+
+    onSnapshot(stockRef, (snapshot) => {
+      const data = {};
+      window.lowStockItems = {};
+      const thresholds = { "Armes": 10, "Équipement Arme": 20, "Munitions": 5000, "Équipement": 20, "Divers": 50 };
+
+      snapshot.forEach(docu => {
+        const item = docu.data();
+        const cat = item.category || "Divers";
+        if (!data[cat]) data[cat] = [];
+        data[cat].push({ id: docu.id, ...item });
+
+        const threshold = thresholds[cat] || 0;
+        if (item.qty < threshold) {
+          if (!window.lowStockItems[cat]) window.lowStockItems[cat] = [];
+          window.lowStockItems[cat].push({ id: docu.id, ...item, neededQty: threshold - item.qty });
+        }
       });
 
-      const thresholds = {
-        "Armes": 10,
-        "Équipement Arme": 20,
-        "Munitions": 5000,
-        "Équipement": 20,
-        "Divers": 50
-      };
+      const container = document.getElementById('categoriesContainer');
+      container.innerHTML = '';
 
-      const threshold = thresholds[category] || 0;
-      if (item.qty < threshold) {
-        if (!lowStockItems[category]) {
-          lowStockItems[category] = [];
+      Object.keys(categories).forEach(cat => {
+        const items = data[cat] || [];
+        const catInfo = categories[cat];
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category';
+        
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        header.textContent = catInfo.icon + ' ' + cat + ' ' + items.length;
+        categoryDiv.appendChild(header);
+
+        if (items.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-message';
+          empty.textContent = 'Aucun objet';
+          categoryDiv.appendChild(empty);
+        } else {
+          const table = document.createElement('table');
+          const thead = document.createElement('thead');
+          const headerRow = document.createElement('tr');
+          headerRow.innerHTML = '<th>Objet</th><th style="text-align: right;">Quantité</th><th style="text-align: right;">Affichage</th><th style="text-align: center;">Action</th>';
+          thead.appendChild(headerRow);
+          table.appendChild(thead);
+
+          items.sort((a, b) => a.qty - b.qty);
+          const tbody = document.createElement('tbody');
+          items.forEach(item => {
+            const tr = document.createElement('tr');
+            const qty = Number(item.qty).toLocaleString('fr-FR');
+            tr.innerHTML = '<td>' + item.name + '</td><td style="text-align: right;"><input type="number" id="qty-' + item.id + '" value="' + item.qty + '" min="0"></td><td style="text-align: right;"><span class="qty-badge">' + qty + '</span></td><td class="action-cell"><button class="btn-update" onclick="updateItem(\'' + item.id + '\', document.getElementById(\'qty-' + item.id + '\').value)">✓</button><button class="btn-danger" onclick="removeItem(\'' + item.id + '\')">✕</button></td>';
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          categoryDiv.appendChild(table);
         }
-        lowStockItems[category].push({
-          id: docu.id,
-          ...item,
-          neededQty: threshold - item.qty
-        });
-      }
+        container.appendChild(categoryDiv);
+      });
     });
 
-    const container = document.getElementById('categoriesContainer');
-    container.innerHTML = '';
-
-    Object.keys(categories).forEach(cat => {
-      const items = data[cat] || [];
-      const catInfo = categories[cat];
-      
-      const categoryDiv = document.createElement('div');
-      categoryDiv.className = 'category';
-      
-      const header = document.createElement('div');
-      header.className = 'category-header';
-      header.innerHTML = `
-        <span class="category-icon">${catInfo.icon}</span>
-        <span>${cat}</span>
-        <span class="category-count">${items.length}</span>
-      `;
-      categoryDiv.appendChild(header);
-
-      if (items.length === 0) {
+    onSnapshot(vehiclesRef, (snapshot) => {
+      const container = document.getElementById('vehiclesContainer');
+      container.innerHTML = '';
+      if (snapshot.empty) {
         const empty = document.createElement('div');
         empty.className = 'empty-message';
-        empty.textContent = 'Aucun objet';
-        categoryDiv.appendChild(empty);
-      } else {
+        empty.textContent = 'Aucun véhicule ajouté';
+        container.appendChild(empty);
+        return;
+      }
+      const vehicles = [];
+      snapshot.forEach(docu => vehicles.push({ id: docu.id, ...docu.data() }));
+      vehicles.sort((a, b) => parseInt(a.number) - parseInt(b.number));
+      vehicles.forEach(vehicle => {
+        const card = document.createElement('div');
+        card.className = 'vehicle-card';
+        card.innerHTML = '<div class="vehicle-header"><div class="vehicle-number">BC ' + vehicle.number + '</div><div class="vehicle-info"><h3>' + vehicle.name + '</h3></div><div class="vehicle-plate">' + vehicle.plate + '</div></div><div class="vehicle-actions"><button onclick="editVehicle(' + vehicle.number + ', \'' + vehicle.name + '\', \'' + vehicle.plate + '\')">✏️ Modifier</button><button class="btn-danger" onclick="removeVehicle(\'' + vehicle.id + '\')">✕ Supprimer</button></div>';
+        container.appendChild(card);
+      });
+    });
+
+    onSnapshot(ordersRef, (snapshot) => {
+      const container = document.getElementById('ordersContainer');
+      container.innerHTML = '';
+
+      if (snapshot.empty && !Object.values(window.lowStockItems).some(arr => arr.length > 0)) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-message';
+        empty.textContent = 'Tous les stocks sont suffisants ✓';
+        container.appendChild(empty);
+        return;
+      }
+
+      if (!snapshot.empty) {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category';
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        header.style.background = 'linear-gradient(135deg, #ec4899, #db2777)';
+        header.textContent = '📝 Commandes manuelles ' + snapshot.size;
+        categoryDiv.appendChild(header);
+
         const table = document.createElement('table');
         const thead = document.createElement('thead');
-        thead.innerHTML = `
-          <tr>
-            <th>Objet</th>
-            <th style="text-align: right;">Quantité</th>
-            <th style="text-align: right;">Affichage</th>
-            <th style="text-align: center;">Action</th>
-          </tr>
-        `;
+        const headerRow = document.createElement('tr');
+        headerRow.innerHTML = '<th>Article</th><th style="text-align: right;">Quantité</th><th style="text-align: center;">Action</th>';
+        thead.appendChild(headerRow);
         table.appendChild(thead);
 
-        items.sort((a, b) => a.qty - b.qty);
-
         const tbody = document.createElement('tbody');
-        items.forEach(item => {
+        const orders = [];
+        snapshot.forEach(docu => orders.push({ id: docu.id, ...docu.data() }));
+        orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        orders.forEach(order => {
           const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${item.name}</td>
-            <td style="text-align: right;"><input type="number" id="qty-${item.id}" value="${item.qty}" min="0" class="qty-input"></td>
-            <td style="text-align: right;"><span class="qty-badge">${Number(item.qty).toLocaleString('fr-FR')}</span></td>
-            <td class="action-cell">
-              <button class="btn-update" onclick="updateItem('${item.id}', document.getElementById('qty-${item.id}').value)">✓</button>
-              <button class="btn-danger" onclick="removeItem('${item.id}')">✕</button>
-            </td>
-          `;
+          const qty = Number(order.qty).toLocaleString('fr-FR');
+          tr.innerHTML = '<td>' + order.item + '</td><td style="text-align: right;"><span class="qty-badge">' + qty + '</span></td><td class="action-cell"><button class="btn-danger" onclick="removeOrder(\'' + order.id + '\')">✕</button></td>';
           tbody.appendChild(tr);
         });
         table.appendChild(tbody);
         categoryDiv.appendChild(table);
+        container.appendChild(categoryDiv);
       }
 
-      container.appendChild(categoryDiv);
+      Object.keys(categories).forEach(cat => {
+        const items = window.lowStockItems[cat] || [];
+        if (items.length === 0) return;
+        const catInfo = categories[cat];
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category';
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        header.textContent = catInfo.icon + ' ' + cat + ' ' + items.length;
+        categoryDiv.appendChild(header);
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        headerRow.innerHTML = '<th>Objet</th><th style="text-align: center;">Stock actuel</th><th style="text-align: center;">À commander</th>';
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        items.forEach(item => {
+          const tr = document.createElement('tr');
+          const qty = Number(item.qty).toLocaleString('fr-FR');
+          const needed = Number(item.neededQty).toLocaleString('fr-FR');
+          tr.innerHTML = '<td>' + item.name + '</td><td style="text-align: center;"><span class="qty-badge">' + qty + '</span></td><td style="text-align: center;"><span class="qty-badge" style="background: #dc2626; color: white;">+' + needed + '</span></td>';
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        categoryDiv.appendChild(table);
+        container.appendChild(categoryDiv);
+      });
     });
 
-    // RENDU COMMANDES
-    const ordersContainer = document.getElementById('ordersContainer');
-    ordersContainer.innerHTML = '';
-
-    const hasLowStock = Object.values(lowStockItems).some(arr => arr.length > 0);
-
-    if (!hasLowStock) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-message';
-      empty.style.gridColumn = '1 / -1';
-      empty.textContent = 'Tous les stocks sont suffisants ✓';
-      ordersContainer.appendChild(empty);
-      return;
-    }
-
-    Object.keys(categories).forEach(cat => {
-      const items = lowStockItems[cat] || [];
-      if (items.length === 0) return;
-
-      const catInfo = categories[cat];
-      
+    onSnapshot(repairsRef, (snapshot) => {
+      const container = document.getElementById('repairsContainer');
+      container.innerHTML = '';
+      if (snapshot.empty) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-message';
+        empty.textContent = 'Aucune arme en réparation';
+        container.appendChild(empty);
+        return;
+      }
       const categoryDiv = document.createElement('div');
       categoryDiv.className = 'category';
-      
       const header = document.createElement('div');
       header.className = 'category-header';
-      header.innerHTML = `
-        <span class="category-icon">${catInfo.icon}</span>
-        <span>${cat}</span>
-        <span class="category-count">${items.length}</span>
-      `;
+      header.textContent = '🔧 Armes en réparation ' + snapshot.size;
       categoryDiv.appendChild(header);
 
       const table = document.createElement('table');
       const thead = document.createElement('thead');
-      thead.innerHTML = `
-        <tr>
-          <th>Objet</th>
-          <th style="text-align: center;">Stock actuel</th>
-          <th style="text-align: center;">À commander</th>
-        </tr>
-      `;
+      const headerRow = document.createElement('tr');
+      headerRow.innerHTML = '<th>Arme</th><th style="text-align: right;">Quantité</th><th style="text-align: center;">Action</th>';
+      thead.appendChild(headerRow);
       table.appendChild(thead);
 
       const tbody = document.createElement('tbody');
-      items.forEach(item => {
+      const repairs = [];
+      snapshot.forEach(docu => repairs.push({ id: docu.id, ...docu.data() }));
+      repairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      repairs.forEach(repair => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${item.name}</td>
-          <td style="text-align: center;"><span class="qty-badge">${Number(item.qty).toLocaleString('fr-FR')}</span></td>
-          <td style="text-align: center;"><span class="qty-badge" style="background: #dc2626; color: white;">+${Number(item.neededQty).toLocaleString('fr-FR')}</span></td>
-        `;
+        const qty = Number(repair.qty).toLocaleString('fr-FR');
+        tr.innerHTML = '<td>' + repair.weapon + '</td><td style="text-align: right;"><span class="qty-badge">' + qty + '</span></td><td class="action-cell"><button class="btn-update" onclick="completeRepair(\'' + repair.id + '\')">✓ Réparé</button><button class="btn-danger" onclick="removeRepair(\'' + repair.id + '\')">✕</button></td>';
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
       categoryDiv.appendChild(table);
-
-      ordersContainer.appendChild(categoryDiv);
-    });
-  });
-
-  // RENDU VÉHICULES
-  onSnapshot(vehiclesRef, (snapshot) => {
-    const container = document.getElementById('vehiclesContainer');
-    container.innerHTML = '';
-
-    if (snapshot.empty) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-message';
-      empty.style.gridColumn = '1 / -1';
-      empty.textContent = 'Aucun véhicule ajouté';
-      container.appendChild(empty);
-      return;
-    }
-
-    const vehicles = [];
-    snapshot.forEach(docu => {
-      vehicles.push({
-        id: docu.id,
-        ...docu.data()
-      });
+      container.appendChild(categoryDiv);
     });
 
-    vehicles.sort((a, b) => {
-      const numA = parseInt(a.number, 10);
-      const numB = parseInt(b.number, 10);
-      return numA - numB;
+    document.getElementById('item').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addItem();
     });
 
-    vehicles.forEach(vehicle => {
-      const card = document.createElement('div');
-      card.className = 'vehicle-card';
-      card.innerHTML = `
-        <div class="vehicle-header">
-          <div class="vehicle-number">BC ${vehicle.number}</div>
-          <div class="vehicle-info">
-            <h3>${vehicle.name}</h3>
-          </div>
-          <div class="vehicle-plate">${vehicle.plate}</div>
-        </div>
-        <div class="vehicle-actions">
-          <button onclick="editVehicle(${vehicle.number}, '${vehicle.name}', '${vehicle.plate}')">✏️ Modifier</button>
-          <button class="btn-danger" onclick="removeVehicle('${vehicle.id}')">✕ Supprimer</button>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  });
-
-  // RENDU RÉPARATIONS
-  onSnapshot(repairsRef, (snapshot) => {
-    const container = document.getElementById('repairsContainer');
-    container.innerHTML = '';
-
-    if (snapshot.empty) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-message';
-      empty.style.gridColumn = '1 / -1';
-      empty.textContent = 'Aucune arme en réparation';
-      container.appendChild(empty);
-      return;
-    }
-
-    const categoryDiv = document.createElement('div');
-    categoryDiv.className = 'category';
-    
-    const header = document.createElement('div');
-    header.className = 'category-header';
-    header.innerHTML = `
-      <span class="category-icon">🔧</span>
-      <span>Armes en réparation</span>
-      <span class="category-count">${snapshot.size}</span>
-    `;
-    categoryDiv.appendChild(header);
-
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    thead.innerHTML = `
-      <tr>
-        <th>Arme</th>
-        <th style="text-align: right;">Quantité</th>
-        <th style="text-align: center;">Action</th>
-      </tr>
-    `;
-    table.appendChild(thead);
-
-    const tbody = document.createElement('tbody');
-    const repairs = [];
-    
-    snapshot.forEach(docu => {
-      repairs.push({
-        id: docu.id,
-        ...docu.data()
-      });
+    document.getElementById('qty').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addItem();
     });
 
-    repairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    repairs.forEach(repair => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${repair.weapon}</td>
-        <td style="text-align: right;"><span class="qty-badge">${Number(repair.qty).toLocaleString('fr-FR')}</span></td>
-        <td class="action-cell">
-          <button class="btn-update" onclick="completeRepair('${repair.id}')">✓ Réparé</button>
-          <button class="btn-danger" onclick="removeRepair('${repair.id}')">✕</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
+    document.getElementById('vehicleNumber').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addVehicle();
     });
 
-    table.appendChild(tbody);
-    categoryDiv.appendChild(table);
-    container.appendChild(categoryDiv);
-  });
+    document.getElementById('vehicleName').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addVehicle();
+    });
 
-  // ENTRÉES AU CLAVIER
-  document.getElementById('item').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addItem();
-  });
+    document.getElementById('vehiclePlate').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addVehicle();
+    });
 
-  document.getElementById('qty').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addItem();
-  });
+    document.getElementById('orderItem').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addOrder();
+    });
 
-  document.getElementById('vehicleNumber').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addVehicle();
-  });
+    document.getElementById('orderQty').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addOrder();
+    });
 
-  document.getElementById('vehicleName').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addVehicle();
-  });
+    document.getElementById('repairWeapon').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addRepair();
+    });
 
-  document.getElementById('vehiclePlate').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addVehicle();
-  });
-
-  document.getElementById('repairWeapon').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addRepair();
-  });
-
-  document.getElementById('repairQty').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addRepair();
-  });
-</script>
+    document.getElementById('repairQty').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addRepair();
+    });
+  </script>
 </body>
 </html>
