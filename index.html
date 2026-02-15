@@ -21,7 +21,6 @@
     .tab-btn { padding: 12px 24px; background: transparent; border: none; color: #94a3b8; cursor: pointer; font-weight: 600; font-size: 14px; border-bottom: 3px solid transparent; transition: all 0.3s ease; margin-bottom: -2px; }
     .tab-btn:hover { color: #cbd5e1; }
     .tab-btn.active { color: #60a5fa; border-bottom-color: #60a5fa; }
-    .tab-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     .form-section { background: #1e293b; padding: 24px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #334155; }
@@ -45,15 +44,6 @@
     .qty-badge { display: inline-block; background: #334155; padding: 4px 10px; border-radius: 20px; font-weight: 600; color: #60a5fa; }
     .empty-message { padding: 24px; text-align: center; color: #64748b; font-size: 14px; }
     .action-cell { text-align: center; }
-    .vehicles-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-    .vehicle-card { background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155; }
-    .vehicle-header { display: flex; align-items: stretch; height: 60px; }
-    .vehicle-number { font-size: 16px; font-weight: 700; color: white; flex: 0 0 25%; display: flex; align-items: center; justify-content: center; border-right: 1px solid #334155; }
-    .vehicle-info { flex: 0 0 35%; display: flex; align-items: center; justify-content: center; border-right: 1px solid #334155; }
-    .vehicle-info h3 { font-size: 14px; margin: 0; color: #e5e7eb; }
-    .vehicle-plate { background: #fbbf24; color: #000; flex: 0 0 40%; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-    .vehicle-actions { display: flex; gap: 8px; padding: 12px 16px; background: #1e293b; }
-    .vehicle-actions button { flex: 1; padding: 8px 12px; font-size: 12px; }
     .role-item { background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #334155; }
     .role-item h3 { margin-bottom: 10px; color: #60a5fa; }
     .permissions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px; }
@@ -68,7 +58,7 @@
       <input id="firstName" type="text" placeholder="Prénom">
       <input id="lastName" type="text" placeholder="Nom">
       <input id="jobTitle" type="text" placeholder="Métier">
-      <button onclick="loginUser()">Connexion</button>
+      <button onclick="window.loginUser()">Connexion</button>
     </div>
   </div>
 
@@ -84,22 +74,11 @@
           <div class="input-group"><label>Catégorie</label><select id="category"><option value="Armes">🔫 Armes</option><option value="Équipement Arme">🎯 Équipement Arme</option><option value="Munitions">💣 Munitions</option><option value="Équipement">🧥 Équipement</option><option value="Divers">📦 Divers</option></select></div>
           <div class="input-group"><label>Nom de l'objet</label><input id="item" type="text" placeholder="Ex: AK47, 9mm, etc."></div>
           <div class="input-group" style="flex: 0 1 120px;"><label>Quantité</label><input id="qty" type="number" placeholder="0" min="0"></div>
-          <button onclick="addItem()">Ajouter / Mettre à jour</button>
+          <div class="input-group" style="flex: 0 1 140px;"><label>Seuil minimum</label><input id="minQty" type="number" placeholder="5" min="1"></div>
+          <button onclick="window.addItem()">Ajouter / Mettre à jour</button>
         </div>
       </div>
       <div class="categories" id="categoriesContainer"></div>
-    </div>
-
-    <div id="vehicles" class="tab-content">
-      <div class="form-section">
-        <div class="form-group">
-          <div class="input-group" style="flex: 0 1 140px;"><label>Matricule (01-99)</label><input id="vehicleNumber" type="text" placeholder="01" maxlength="2"></div>
-          <div class="input-group"><label>Nom du véhicule</label><input id="vehicleName" type="text" placeholder="Ex: Dispatch, Patrol, etc."></div>
-          <div class="input-group"><label>Plaque d'immatriculation</label><input id="vehiclePlate" type="text" placeholder="Ex: AA-123-BB"></div>
-          <button onclick="addVehicle()">Ajouter / Mettre à jour</button>
-        </div>
-      </div>
-      <div class="vehicles-grid" id="vehiclesContainer"></div>
     </div>
 
     <div id="orders" class="tab-content">
@@ -107,7 +86,7 @@
         <div class="form-group">
           <div class="input-group"><label>Article à commander</label><input id="orderItem" type="text" placeholder="Ex: AK47, 9mm, Gilet pare-balles, etc."></div>
           <div class="input-group" style="flex: 0 1 120px;"><label>Quantité</label><input id="orderQty" type="number" placeholder="0" min="0"></div>
-          <button onclick="addOrder()">Ajouter à la commande</button>
+          <button onclick="window.addOrder()">Ajouter à la commande</button>
         </div>
       </div>
       <div class="categories" id="ordersContainer"></div>
@@ -118,7 +97,7 @@
         <div class="form-group">
           <div class="input-group"><label>Nom de l'arme</label><input id="repairWeapon" type="text" placeholder="Ex: AK47, M9, etc."></div>
           <div class="input-group" style="flex: 0 1 120px;"><label>Quantité</label><input id="repairQty" type="number" placeholder="0" min="0"></div>
-          <button onclick="addRepair()">Ajouter à la réparation</button>
+          <button onclick="window.addRepair()">Ajouter à la réparation</button>
         </div>
       </div>
       <div class="categories" id="repairsContainer"></div>
@@ -129,7 +108,7 @@
         <h2 style="color: #60a5fa; margin-bottom: 20px;">Gestion des rôles</h2>
         <div class="form-group">
           <div class="input-group"><label>Nom du rôle</label><input id="roleName" type="text" placeholder="Ex: Responsable Stock"></div>
-          <button onclick="createRole()">Créer un rôle</button>
+          <button onclick="window.createRole()">Créer un rôle</button>
         </div>
       </div>
       <div id="rolesContainer"></div>
@@ -143,23 +122,21 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     
     const firebaseConfig = { apiKey: "AIzaSyBWHyADypkFFxslXd_9b2EvJIdFUq62qjY", authDomain: "bcssi-stock.firebaseapp.com", projectId: "bcssi-stock" };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const stockRef = collection(db, "stock");
-    const vehiclesRef = collection(db, "vehicles");
     const repairsRef = collection(db, "repairs");
     const ordersRef = collection(db, "orders");
     const usersRef = collection(db, "users");
     const rolesRef = collection(db, "roles");
     
-    const adminEmail = "claude@admin.com";
     window.currentUser = null;
     window.lowStockItems = {};
     const categories = { "Armes": { icon: "🔫" }, "Équipement Arme": { icon: "🎯" }, "Munitions": { icon: "💣" }, "Équipement": { icon: "🧥" }, "Divers": { icon: "📦" } };
-    const defaultPermissions = { "inventory": false, "vehicles": false, "orders": false, "repairs": false, "admin": false };
+    const defaultPermissions = { "inventory": false, "orders": false, "repairs": false, "admin": false };
 
     window.loginUser = async () => {
       const firstName = document.getElementById('firstName').value.trim();
@@ -180,7 +157,7 @@
         assignedRole = userData.assignedRole || null;
       } else {
         isAdmin = (firstName.toLowerCase() === "claude") || (firstName.toLowerCase() === "larry" && lastName.toLowerCase() === "warner");
-        permissions = isAdmin ? { inventory: true, vehicles: true, orders: true, repairs: true, admin: true } : { ...defaultPermissions };
+        permissions = isAdmin ? { inventory: true, orders: true, repairs: true, admin: true } : { ...defaultPermissions };
         assignedRole = null;
       }
       
@@ -191,6 +168,7 @@
       document.getElementById('mainApp').style.display = 'block';
       setupTabs();
       updateUserInfo();
+      loadRoles();
     };
 
     function setupTabs() {
@@ -209,7 +187,6 @@
 
       const tabs = [
         { id: 'inventory', label: '📦 Inventaire', permission: 'inventory' },
-        { id: 'vehicles', label: '🚗 Véhicules', permission: 'vehicles' },
         { id: 'orders', label: '🛒 Commandes', permission: 'orders' },
         { id: 'repairs', label: '🔧 Réparations', permission: 'repairs' },
         { id: 'admin', label: '⚙️ Admin', permission: 'admin' }
@@ -231,12 +208,12 @@
       info.innerHTML = window.currentUser.firstName + ' ' + window.currentUser.lastName + '<br>' + window.currentUser.jobTitle + (window.currentUser.isAdmin ? '<br><span style="color: #60a5fa;">ADMIN</span>' : '');
     }
 
-    window.switchTab = (tabName) => {
+    function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(tabName).classList.add('active');
       event.target.classList.add('active');
-    };
+    }
 
     window.createRole = async () => {
       const roleName = document.getElementById('roleName').value.trim();
@@ -381,10 +358,12 @@
       const cat = document.getElementById('category').value;
       const name = document.getElementById('item').value.trim();
       const qty = Number(document.getElementById('qty').value);
+      const minQty = Number(document.getElementById('minQty').value) || 5;
       if (!name || qty < 0) return;
-      await setDoc(doc(stockRef, cat + '__' + name), { category: cat, name, qty });
+      await setDoc(doc(stockRef, cat + '__' + name), { category: cat, name, qty, minQty });
       document.getElementById('item').value = '';
       document.getElementById('qty').value = '';
+      document.getElementById('minQty').value = '';
     };
 
     window.removeItem = async (docId) => await deleteDoc(doc(stockRef, docId));
@@ -392,27 +371,6 @@
       const qty = Number(newQty);
       if (qty < 0) return;
       await setDoc(doc(stockRef, docId), { qty }, { merge: true });
-    };
-
-    window.addVehicle = async () => {
-      const numberStr = document.getElementById('vehicleNumber').value.trim();
-      const name = document.getElementById('vehicleName').value.trim();
-      const plate = document.getElementById('vehiclePlate').value.trim();
-      if (!numberStr || numberStr.length !== 2 || !name || !plate) return;
-      const number = parseInt(numberStr, 10);
-      if (isNaN(number) || number < 1 || number > 99) return;
-      const num = String(number).padStart(2, '0');
-      await setDoc(doc(vehiclesRef, 'vehicle_' + num), { number: num, name, plate });
-      document.getElementById('vehicleNumber').value = '';
-      document.getElementById('vehicleName').value = '';
-      document.getElementById('vehiclePlate').value = '';
-    };
-
-    window.removeVehicle = async (docId) => await deleteDoc(doc(vehiclesRef, docId));
-    window.editVehicle = (number, name, plate) => {
-      document.getElementById('vehicleNumber').value = number;
-      document.getElementById('vehicleName').value = name;
-      document.getElementById('vehiclePlate').value = plate;
     };
 
     window.addOrder = async () => {
@@ -457,16 +415,15 @@
     onSnapshot(stockRef, (snapshot) => {
       const data = {};
       window.lowStockItems = {};
-      const thresholds = { "Armes": 5, "Équipement Arme": 20, "Munitions": 5000, "Équipement": 5, "Divers": 50 };
       snapshot.forEach(docu => {
         const item = docu.data();
         const cat = item.category || "Divers";
         if (!data[cat]) data[cat] = [];
         data[cat].push({ id: docu.id, ...item });
-        const threshold = thresholds[cat] || 0;
-        if (item.qty < threshold) {
+        const minThreshold = item.minQty || 5;
+        if (item.qty < minThreshold) {
           if (!window.lowStockItems[cat]) window.lowStockItems[cat] = [];
-          window.lowStockItems[cat].push({ id: docu.id, ...item, neededQty: threshold - item.qty });
+          window.lowStockItems[cat].push({ id: docu.id, ...item, neededQty: minThreshold - item.qty });
         }
       });
 
@@ -538,11 +495,11 @@
             const btn1 = document.createElement('button');
             btn1.className = 'btn-update';
             btn1.textContent = '✓';
-            btn1.onclick = () => updateItem(item.id, document.getElementById('qty-' + item.id).value);
+            btn1.onclick = () => window.updateItem(item.id, document.getElementById('qty-' + item.id).value);
             const btn2 = document.createElement('button');
             btn2.className = 'btn-danger';
             btn2.textContent = '✕';
-            btn2.onclick = () => removeItem(item.id);
+            btn2.onclick = () => window.removeItem(item.id);
             td4.appendChild(btn1);
             td4.appendChild(btn2);
             tr.appendChild(td4);
@@ -552,55 +509,6 @@
           div.appendChild(table);
         }
         container.appendChild(div);
-      });
-    });
-
-    onSnapshot(vehiclesRef, (snapshot) => {
-      const container = document.getElementById('vehiclesContainer');
-      container.innerHTML = '';
-      if (snapshot.empty) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-message';
-        empty.textContent = 'Aucun véhicule ajouté';
-        container.appendChild(empty);
-        return;
-      }
-      const vehicles = [];
-      snapshot.forEach(docu => vehicles.push({ id: docu.id, ...docu.data() }));
-      vehicles.sort((a, b) => parseInt(a.number) - parseInt(b.number));
-      vehicles.forEach(vehicle => {
-        const card = document.createElement('div');
-        card.className = 'vehicle-card';
-        const header = document.createElement('div');
-        header.className = 'vehicle-header';
-        const num = document.createElement('div');
-        num.className = 'vehicle-number';
-        num.textContent = 'BC ' + vehicle.number;
-        const info = document.createElement('div');
-        info.className = 'vehicle-info';
-        const h3 = document.createElement('h3');
-        h3.textContent = vehicle.name;
-        info.appendChild(h3);
-        const plate = document.createElement('div');
-        plate.className = 'vehicle-plate';
-        plate.textContent = vehicle.plate;
-        header.appendChild(num);
-        header.appendChild(info);
-        header.appendChild(plate);
-        card.appendChild(header);
-        const actions = document.createElement('div');
-        actions.className = 'vehicle-actions';
-        const btn1 = document.createElement('button');
-        btn1.textContent = '✏️ Modifier';
-        btn1.onclick = () => editVehicle(vehicle.number, vehicle.name, vehicle.plate);
-        const btn2 = document.createElement('button');
-        btn2.className = 'btn-danger';
-        btn2.textContent = '✕ Supprimer';
-        btn2.onclick = () => removeVehicle(vehicle.id);
-        actions.appendChild(btn1);
-        actions.appendChild(btn2);
-        card.appendChild(actions);
-        container.appendChild(card);
       });
     });
 
@@ -660,12 +568,12 @@
           btnDec.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
           btnDec.style.marginRight = '4px';
           btnDec.textContent = '−';
-          btnDec.onclick = () => decrementOrder(order.id, order.qty);
+          btnDec.onclick = () => window.decrementOrder(order.id, order.qty);
           const btnInc = document.createElement('button');
           btnInc.className = 'btn-update';
           btnInc.style.marginLeft = '4px';
           btnInc.textContent = '+';
-          btnInc.onclick = () => incrementOrder(order.id, order.qty);
+          btnInc.onclick = () => window.incrementOrder(order.id, order.qty);
           td2.appendChild(btnDec);
           td2.appendChild(btnInc);
           tr.appendChild(td2);
@@ -674,7 +582,7 @@
           const btnDel = document.createElement('button');
           btnDel.className = 'btn-danger';
           btnDel.textContent = '✕';
-          btnDel.onclick = () => removeOrder(order.id);
+          btnDel.onclick = () => window.removeOrder(order.id);
           td3.appendChild(btnDel);
           tr.appendChild(td3);
           tbody.appendChild(tr);
@@ -809,11 +717,11 @@
         const btn1 = document.createElement('button');
         btn1.className = 'btn-update';
         btn1.textContent = '✓ Réparé';
-        btn1.onclick = () => completeRepair(repair.id);
+        btn1.onclick = () => window.completeRepair(repair.id);
         const btn2 = document.createElement('button');
         btn2.className = 'btn-danger';
         btn2.textContent = '✕';
-        btn2.onclick = () => removeRepair(repair.id);
+        btn2.onclick = () => window.removeRepair(repair.id);
         td3.appendChild(btn1);
         td3.appendChild(btn2);
         tr.appendChild(td3);
@@ -824,22 +732,13 @@
       container.appendChild(div);
     });
 
-    loadRoles();
-
-    document.getElementById('item').addEventListener('keypress', (e) => { if (e.key === 'Enter') addItem(); });
-    document.getElementById('qty').addEventListener('keypress', (e) => { if (e.key === 'Enter') addItem(); });
-    document.getElementById('vehicleNumber').addEventListener('keypress', (e) => { if (e.key === 'Enter') addVehicle(); });
-    document.getElementById('vehicleName').addEventListener('keypress', (e) => { if (e.key === 'Enter') addVehicle(); });
-    document.getElementById('vehiclePlate').addEventListener('keypress', (e) => { if (e.key === 'Enter') addVehicle(); });
-    document.getElementById('orderItem').addEventListener('keypress', (e) => { if (e.key === 'Enter') addOrder(); });
-    document.getElementById('orderQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') addOrder(); });
-    document.getElementById('repairWeapon').addEventListener('keypress', (e) => { if (e.key === 'Enter') addRepair(); });
-    document.getElementById('repairQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') addRepair(); });
-
-    window.getDoc = async (docRef) => {
-      const snap = await getDoc(docRef);
-      return snap;
-    };
+    document.getElementById('item').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addItem(); });
+    document.getElementById('qty').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addItem(); });
+    document.getElementById('minQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addItem(); });
+    document.getElementById('orderItem').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addOrder(); });
+    document.getElementById('orderQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addOrder(); });
+    document.getElementById('repairWeapon').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addRepair(); });
+    document.getElementById('repairQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addRepair(); });
   </script>
 </body>
 </html>
