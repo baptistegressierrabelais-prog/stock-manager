@@ -24,6 +24,7 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     .form-section { background: #1e293b; padding: 24px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #334155; }
+    .form-section h2 { color: #60a5fa; margin-bottom: 20px; }
     .form-group { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
     .input-group { flex: 1; min-width: 200px; }
     label { display: block; font-size: 12px; margin-bottom: 6px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -105,7 +106,7 @@
 
     <div id="admin" class="tab-content">
       <div class="form-section">
-        <h2 style="color: #60a5fa; margin-bottom: 20px;">Gestion des rôles</h2>
+        <h2>Gestion des rôles</h2>
         <div class="form-group">
           <div class="input-group"><label>Nom du rôle</label><input id="roleName" type="text" placeholder="Ex: Responsable Stock"></div>
           <button onclick="window.createRole()">Créer un rôle</button>
@@ -114,7 +115,7 @@
       <div id="rolesContainer"></div>
 
       <div class="form-section" style="margin-top: 40px;">
-        <h2 style="color: #60a5fa; margin-bottom: 20px;">Gestion des utilisateurs</h2>
+        <h2>Gestion des utilisateurs</h2>
         <div id="usersContainer"></div>
       </div>
     </div>
@@ -138,6 +139,7 @@
     const categories = { "Armes": { icon: "🔫" }, "Équipement Arme": { icon: "🎯" }, "Munitions": { icon: "💣" }, "Équipement": { icon: "🧥" }, "Divers": { icon: "📦" } };
     const defaultPermissions = { "inventory": false, "orders": false, "repairs": false, "admin": false };
 
+    // ============ AUTHENTIFICATION ============
     window.loginUser = async () => {
       const firstName = document.getElementById('firstName').value.trim();
       const lastName = document.getElementById('lastName').value.trim();
@@ -149,7 +151,6 @@
       const userDoc = await getDoc(userDocRef);
 
       let permissions, isAdmin, assignedRole;
-
       if (userDoc.exists()) {
         const userData = userDoc.data();
         permissions = userData.permissions;
@@ -162,7 +163,6 @@
       }
       
       await setDoc(userDocRef, { firstName, lastName, jobTitle, userId, permissions, isAdmin, assignedRole, createdAt: new Date().toISOString() }, { merge: true });
-      
       window.currentUser = { userId, firstName, lastName, jobTitle, permissions, isAdmin, assignedRole };
       document.getElementById('loginModal').classList.remove('active');
       document.getElementById('mainApp').style.display = 'block';
@@ -171,6 +171,7 @@
       loadRoles();
     };
 
+    // ============ INTERFACE ============
     function setupTabs() {
       const container = document.getElementById('tabsContainer');
       container.innerHTML = '';
@@ -191,11 +192,11 @@
         { id: 'repairs', label: '🔧 Réparations', permission: 'repairs' },
         { id: 'admin', label: '⚙️ Admin', permission: 'admin' }
       ];
-      tabs.forEach(tab => {
+      tabs.forEach((tab, idx) => {
         const hasPermission = window.currentUser.isAdmin || window.currentUser.permissions[tab.permission];
         if (hasPermission) {
           const btn = document.createElement('button');
-          btn.className = 'tab-btn' + (tab.id === 'inventory' ? ' active' : '');
+          btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
           btn.textContent = tab.label;
           btn.onclick = () => switchTab(tab.id);
           container.appendChild(btn);
@@ -215,12 +216,27 @@
       event.target.classList.add('active');
     }
 
+    function createBadge(txt) {
+      const span = document.createElement('span');
+      span.className = 'qty-badge';
+      span.textContent = txt;
+      return span;
+    }
+
+    // ============ GESTION DES RÔLES ============
     window.createRole = async () => {
       const roleName = document.getElementById('roleName').value.trim();
       if (!roleName) return;
       await setDoc(doc(rolesRef, roleName.toLowerCase()), { name: roleName, permissions: { ...defaultPermissions }, createdAt: new Date().toISOString() });
       document.getElementById('roleName').value = '';
       loadRoles();
+    };
+
+    window.updateRolePermission = async (roleId, permission, value) => {
+      const role = await getDoc(doc(rolesRef, roleId));
+      const permissions = role.data().permissions;
+      permissions[permission] = value;
+      await setDoc(doc(rolesRef, roleId), { permissions }, { merge: true });
     };
 
     function loadRoles() {
@@ -242,7 +258,7 @@
             const inp = document.createElement('input');
             inp.type = 'checkbox';
             inp.checked = role.permissions[perm];
-            inp.onchange = () => updateRolePermission(docu.id, perm, inp.checked);
+            inp.onchange = () => window.updateRolePermission(docu.id, perm, inp.checked);
             label.appendChild(inp);
             const txt = document.createElement('span');
             txt.textContent = perm;
@@ -280,20 +296,10 @@
           currentRoleP.style.fontSize = '12px';
           currentRoleP.style.color = '#60a5fa';
           currentRoleP.style.marginBottom = '15px';
-          currentRoleP.textContent = 'Rôle actuel: ' + (user.assignedRole ? user.assignedRole : 'Aucun');
-          if (user.isAdmin) {
-            currentRoleP.textContent = 'Rôle actuel: ADMIN';
-            currentRoleP.style.color = '#f59e0b';
-          }
+          currentRoleP.textContent = 'Rôle: ' + (user.isAdmin ? 'ADMIN' : (user.assignedRole || 'Aucun'));
+          if (user.isAdmin) currentRoleP.style.color = '#f59e0b';
           div.appendChild(currentRoleP);
 
-          const roleDiv = document.createElement('div');
-          roleDiv.style.marginBottom = '10px';
-          const label = document.createElement('label');
-          label.style.display = 'block';
-          label.style.marginBottom = '8px';
-          label.style.fontSize = '12px';
-          label.textContent = 'Attribuer un rôle:';
           const select = document.createElement('select');
           select.style.width = '100%';
           select.style.padding = '8px';
@@ -313,9 +319,7 @@
               const option = document.createElement('option');
               option.value = roleDoc.id;
               option.textContent = roleDoc.data().name;
-              if (user.assignedRole === roleDoc.id) {
-                option.selected = true;
-              }
+              if (user.assignedRole === roleDoc.id) option.selected = true;
               select.appendChild(option);
             });
           });
@@ -333,10 +337,7 @@
             }
           };
 
-          roleDiv.appendChild(label);
-          roleDiv.appendChild(select);
-          div.appendChild(roleDiv);
-
+          div.appendChild(select);
           const delBtn = document.createElement('button');
           delBtn.className = 'btn-danger';
           delBtn.textContent = 'Supprimer utilisateur';
@@ -347,13 +348,7 @@
       });
     }
 
-    window.updateRolePermission = async (roleId, permission, value) => {
-      const role = await getDoc(doc(rolesRef, roleId));
-      const permissions = role.data().permissions;
-      permissions[permission] = value;
-      await setDoc(doc(rolesRef, roleId), { permissions }, { merge: true });
-    };
-
+    // ============ GESTION DE L'INVENTAIRE ============
     window.addItem = async () => {
       const cat = document.getElementById('category').value;
       const name = document.getElementById('item').value.trim();
@@ -366,13 +361,17 @@
       document.getElementById('minQty').value = '';
     };
 
-    window.removeItem = async (docId) => await deleteDoc(doc(stockRef, docId));
+    window.removeItem = async (docId) => {
+      await deleteDoc(doc(stockRef, docId));
+    };
+
     window.updateItem = async (docId, newQty) => {
       const qty = Number(newQty);
       if (qty < 0) return;
       await setDoc(doc(stockRef, docId), { qty }, { merge: true });
     };
 
+    // ============ GESTION DES COMMANDES ============
     window.addOrder = async () => {
       const item = document.getElementById('orderItem').value.trim();
       const qtyValue = document.getElementById('orderQty').value.trim();
@@ -391,6 +390,7 @@
       else await setDoc(doc(ordersRef, docId), { qty: qty - 1 }, { merge: true });
     };
 
+    // ============ GESTION DES RÉPARATIONS ============
     window.addRepair = async () => {
       const weapon = document.getElementById('repairWeapon').value.trim();
       const qtyValue = document.getElementById('repairQty').value.trim();
@@ -405,13 +405,7 @@
     window.removeRepair = async (docId) => await deleteDoc(doc(repairsRef, docId));
     window.completeRepair = async (docId) => await deleteDoc(doc(repairsRef, docId));
 
-    function createBadge(txt) {
-      const span = document.createElement('span');
-      span.className = 'qty-badge';
-      span.textContent = txt;
-      return span;
-    }
-
+    // ============ AFFICHAGE DE L'INVENTAIRE ============
     onSnapshot(stockRef, (snapshot) => {
       const data = {};
       window.lowStockItems = {};
@@ -512,6 +506,7 @@
       });
     });
 
+    // ============ AFFICHAGE DES COMMANDES ============
     onSnapshot(ordersRef, (snapshot) => {
       const container = document.getElementById('ordersContainer');
       container.innerHTML = '';
@@ -662,6 +657,7 @@
       });
     });
 
+    // ============ AFFICHAGE DES RÉPARATIONS ============
     onSnapshot(repairsRef, (snapshot) => {
       const container = document.getElementById('repairsContainer');
       container.innerHTML = '';
@@ -732,6 +728,7 @@
       container.appendChild(div);
     });
 
+    // ============ EVENT LISTENERS ============
     document.getElementById('item').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addItem(); });
     document.getElementById('qty').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addItem(); });
     document.getElementById('minQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addItem(); });
