@@ -47,9 +47,11 @@
     .action-cell { text-align: center; }
     .role-item { background: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #334155; }
     .role-item h3 { margin-bottom: 10px; color: #60a5fa; }
-    .permissions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px; }
+    .permissions { display: grid; grid-template-columns: repeat(auto-fit, minmin(200px, 1fr)); gap: 10px; margin-bottom: 15px; }
     .permission-checkbox { display: flex; align-items: center; gap: 8px; }
     .permission-checkbox input { width: auto; }
+    .notification { position: fixed; top: 80px; right: 20px; background: #10b981; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); z-index: 1001; animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   </style>
 </head>
 <body>
@@ -138,6 +140,31 @@
     window.lowStockItems = {};
     const categories = { "Armes": { icon: "🔫" }, "Équipement Arme": { icon: "🎯" }, "Munitions": { icon: "💣" }, "Équipement": { icon: "🧥" }, "Divers": { icon: "📦" } };
     const defaultPermissions = { "inventory": false, "orders": false, "repairs": false, "admin": false };
+
+    // ============ FONCTION DE NOTIFICATION ============
+    function showNotification(message) {
+      const notif = document.createElement('div');
+      notif.className = 'notification';
+      notif.textContent = message;
+      document.body.appendChild(notif);
+      setTimeout(() => {
+        notif.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => notif.remove(), 300);
+      }, 3000);
+    }
+
+    // ============ FONCTION POUR CRÉER UNE COMMANDE AUTOMATIQUE ============
+    async function createAutoOrder(itemName, neededQty, category) {
+      const autoOrderId = 'auto_' + itemName.replace(/\s+/g, '_') + '_' + Date.now();
+      await setDoc(doc(ordersRef, autoOrderId), {
+        item: itemName,
+        qty: neededQty,
+        category: category,
+        isAuto: true,
+        createdAt: new Date().toISOString()
+      });
+      showNotification(`Commande automatique créée : ${itemName} x${neededQty}`);
+    }
 
     // ============ AUTHENTIFICATION ============
     window.loginUser = async () => {
@@ -355,7 +382,15 @@
       const qty = Number(document.getElementById('qty').value);
       const minQty = Number(document.getElementById('minQty').value) || 5;
       if (!name || qty < 0) return;
+      
       await setDoc(doc(stockRef, cat + '__' + name), { category: cat, name, qty, minQty });
+      
+      // NOUVEAU : Vérifier si une commande automatique doit être créée
+      if (qty < minQty) {
+        const neededQty = minQty - qty;
+        await createAutoOrder(name, neededQty, cat);
+      }
+      
       document.getElementById('item').value = '';
       document.getElementById('qty').value = '';
       document.getElementById('minQty').value = '';
@@ -368,7 +403,21 @@
     window.updateItem = async (docId, newQty) => {
       const qty = Number(newQty);
       if (qty < 0) return;
-      await setDoc(doc(stockRef, docId), { qty }, { merge: true });
+      
+      // Récupérer les infos de l'item avant de le mettre à jour
+      const itemDoc = await getDoc(doc(stockRef, docId));
+      if (itemDoc.exists()) {
+        const itemData = itemDoc.data();
+        const minQty = itemData.minQty || 5;
+        
+        await setDoc(doc(stockRef, docId), { qty }, { merge: true });
+        
+        // NOUVEAU : Vérifier si une commande automatique doit être créée
+        if (qty < minQty) {
+          const neededQty = minQty - qty;
+          await createAutoOrder(itemData.name, neededQty, itemData.category);
+        }
+      }
     };
 
     // ============ GESTION DES COMMANDES ============
@@ -527,7 +576,7 @@
         icon.className = 'category-icon';
         icon.textContent = '📝';
         const title = document.createElement('span');
-        title.textContent = 'Commandes manuelles';
+        title.textContent = 'Commandes';
         const count = document.createElement('span');
         count.className = 'category-count';
         count.textContent = snapshot.size;
@@ -538,10 +587,10 @@
         const table = document.createElement('table');
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
-        ['Article', 'Quantité', 'Action'].forEach(txt => {
+        ['Article', 'Quantité', 'Type', 'Action'].forEach(txt => {
           const th = document.createElement('th');
           th.textContent = txt;
-          if (txt !== 'Article') th.style.textAlign = txt === 'Action' ? 'center' : 'right';
+          if (txt !== 'Article' && txt !== 'Type') th.style.textAlign = txt === 'Action' ? 'center' : 'right';
           headerRow.appendChild(th);
         });
         thead.appendChild(headerRow);
@@ -572,6 +621,25 @@
           td2.appendChild(btnDec);
           td2.appendChild(btnInc);
           tr.appendChild(td2);
+          const td2b = document.createElement('td');
+          td2b.style.textAlign = 'center';
+          const typeBadge = document.createElement('span');
+          typeBadge.style.display = 'inline-block';
+          typeBadge.style.padding = '4px 8px';
+          typeBadge.style.borderRadius = '4px';
+          typeBadge.style.fontSize = '11px';
+          typeBadge.style.fontWeight = '600';
+          if (order.isAuto) {
+            typeBadge.style.background = '#10b981';
+            typeBadge.style.color = 'white';
+            typeBadge.textContent = 'AUTO';
+          } else {
+            typeBadge.style.background = '#6366f1';
+            typeBadge.style.color = 'white';
+            typeBadge.textContent = 'MANUEL';
+          }
+          td2b.appendChild(typeBadge);
+          tr.appendChild(td2b);
           const td3 = document.createElement('td');
           td3.className = 'action-cell';
           const btnDel = document.createElement('button');
@@ -738,4 +806,4 @@
     document.getElementById('repairQty').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.addRepair(); });
   </script>
 </body>
-</html>
+</html
